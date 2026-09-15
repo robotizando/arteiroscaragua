@@ -2,14 +2,17 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Boxes, LayoutDashboard, Paintbrush, ShieldCheck, Users } from 'lucide-react';
+import { Boxes, History, LayoutDashboard, Paintbrush, Settings, ShieldCheck, UserRound, Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const navItems = [
   { href: '/dashboard', label: 'Início', icon: LayoutDashboard },
   { href: '/dashboard/arteiros', label: 'Arteiros', icon: Users },
   { href: '/dashboard/materiais', label: 'Materiais', icon: Boxes },
+  { href: '/dashboard/usuarios', label: 'Usuários', icon: UserRound },
+  { href: '/dashboard/acessos', label: 'Log de acesso', icon: History },
   { href: '/dashboard/admin-users', label: 'Usuários admin', icon: ShieldCheck },
+  { href: '/dashboard/configuracoes', label: 'Configurações do site', icon: Settings },
 ];
 
 export function Sidebar() {

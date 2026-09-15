@@ -4,3 +4,8 @@ export * from './material';
 export * from './arteiro';
 export * from './arteiro-peca';
 export * from './arteiro-child';
+export * from './usuario';
+export * from './acesso-log';
+export * from './configuracao-site';
+export * from './conta';
+export * from './publico';

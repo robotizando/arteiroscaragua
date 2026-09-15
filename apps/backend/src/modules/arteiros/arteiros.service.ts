@@ -23,6 +23,7 @@ import {
 } from '../../database/client';
 import { AppError } from '../../middlewares/error-handler';
 import { toArteiroDTO, toArteiroPecaDTO, toArteiroSummaryDTO } from './arteiros.mapper';
+import { loadPecaMateriais } from './pecas.service';
 
 const MAX_PAGE_SIZE = 200;
 
@@ -88,18 +89,22 @@ export async function getArteiroById(id: number): Promise<Arteiro> {
   ]);
 
   const pecaIds = pecaRows.map((peca) => peca.id);
-  const imagensRows = pecaIds.length
-    ? await db
-        .select()
-        .from(arteiroPecaImagens)
-        .where(inArray(arteiroPecaImagens.pecaId, pecaIds))
-        .orderBy(asc(arteiroPecaImagens.ordem))
-    : [];
+  const [imagensRows, materiaisPorPeca] = await Promise.all([
+    pecaIds.length
+      ? db
+          .select()
+          .from(arteiroPecaImagens)
+          .where(inArray(arteiroPecaImagens.pecaId, pecaIds))
+          .orderBy(asc(arteiroPecaImagens.ordem))
+      : [],
+    loadPecaMateriais(pecaIds),
+  ]);
 
   const pecas = pecaRows.map((peca) =>
     toArteiroPecaDTO(
       peca,
       imagensRows.filter((imagem) => imagem.pecaId === peca.id),
+      materiaisPorPeca.get(peca.id) ?? [],
     ),
   );
 

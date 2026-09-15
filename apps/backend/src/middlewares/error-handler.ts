@@ -6,6 +6,8 @@ export class AppError extends Error {
   constructor(
     message: string,
     public statusCode: number = 500,
+    // Código estável para o frontend decidir o que mostrar (ex.: email_nao_verificado).
+    public codigo?: string,
   ) {
     super(message);
     Object.setPrototypeOf(this, AppError.prototype);
@@ -34,12 +36,12 @@ export function errorHandler(
   }
 
   if (err instanceof AppError) {
-    return res.status(err.statusCode).json({ error: err.message });
+    return res.status(err.statusCode).json({ error: err.message, ...(err.codigo ? { codigo: err.codigo } : {}) });
   }
 
   if (err instanceof multer.MulterError) {
     const message =
-      err.code === 'LIMIT_FILE_SIZE' ? 'Imagem muito grande (máximo 2MB)' : 'Falha no upload do arquivo';
+      err.code === 'LIMIT_FILE_SIZE' ? 'Imagem excede o tamanho máximo permitido' : 'Falha no upload do arquivo';
     return res.status(400).json({ error: message });
   }
 

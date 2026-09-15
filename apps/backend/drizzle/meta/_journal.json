@@ -29,6 +29,48 @@
       "when": 1789429602674,
       "tag": "0003_omniscient_iceman",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1789482441469,
+      "tag": "0004_overconfident_union_jack",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1789485688323,
+      "tag": "0005_usuarios_flags_moderador_verificado",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1789485705394,
+      "tag": "0006_usuarios_remove_tipo",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "6",
+      "when": 1789486145441,
+      "tag": "0007_configuracoes_site",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "6",
+      "when": 1789488037615,
+      "tag": "0008_site_publico_conta",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "6",
+      "when": 1789490526042,
+      "tag": "0009_peca_materiais",
+      "breakpoints": true
     }
   ]
 }

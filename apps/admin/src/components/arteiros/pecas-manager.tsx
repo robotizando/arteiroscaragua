@@ -16,6 +16,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import {
@@ -30,6 +31,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { API_BASE_URL, getApiErrorMessage } from '@/lib/api';
 import { useCreatePeca, useDeletePeca, useDeletePecaImagem, useUpdatePeca } from '@/lib/arteiros-api';
+import { useMateriais } from '@/lib/materiais-api';
 
 const emptyValues: CreateArteiroPecaInput = { nome: '', valorSugerido: undefined, descricao: '' };
 
@@ -40,10 +42,22 @@ function formatMoeda(value: number | null) {
 
 export function PecasManager({ arteiroId, pecas }: { arteiroId: number; pecas: ArteiroPeca[] }) {
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [editingPeca, setEditingPeca] = useState<ArteiroPeca | null>(null);
+  // Guarda só o id: a peça é derivada da lista atual, para que remoções de imagem
+  // feitas com o diálogo aberto reflitam imediatamente os dados recarregados.
+  const [editingPecaId, setEditingPecaId] = useState<number | null>(null);
+  const editingPeca = pecas.find((peca) => peca.id === editingPecaId) ?? null;
   const [pendingDelete, setPendingDelete] = useState<ArteiroPeca | null>(null);
   const [novasImagens, setNovasImagens] = useState<File[]>([]);
+  const [materialIds, setMaterialIds] = useState<string[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const { data: materiaisData } = useMateriais({ estado: 'ativo', pageSize: 200 });
+  // Nomes dos materiais: os ativos da listagem e os já vinculados à peça (que podem ter sido desativados).
+  const nomesMateriais = new Map<string, string>([
+    ...(editingPeca?.materiais ?? []).map((material) => [material.id, material.nome] as [string, string]),
+    ...(materiaisData?.items ?? []).map((material) => [material.id, material.nome] as [string, string]),
+  ]);
+  const materiaisDisponiveis = (materiaisData?.items ?? []).filter((material) => !materialIds.includes(material.id));
 
   const createMutation = useCreatePeca(arteiroId);
   const updateMutation = useUpdatePeca(arteiroId);
@@ -69,17 +83,20 @@ export function PecasManager({ arteiroId, pecas }: { arteiroId: number; pecas: A
           : emptyValues,
       );
       setNovasImagens([]);
+      setMaterialIds(editingPeca?.materiais.map((material) => material.id) ?? []);
       if (fileInputRef.current) fileInputRef.current.value = '';
     }
-  }, [dialogOpen, editingPeca, reset]);
+    // Depende do id (e não do objeto) para não apagar o que foi digitado quando a lista é recarregada.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dialogOpen, editingPecaId, reset]);
 
   function openCreate() {
-    setEditingPeca(null);
+    setEditingPecaId(null);
     setDialogOpen(true);
   }
 
   function openEdit(peca: ArteiroPeca) {
-    setEditingPeca(peca);
+    setEditingPecaId(peca.id);
     setDialogOpen(true);
   }
 
@@ -98,6 +115,8 @@ export function PecasManager({ arteiroId, pecas }: { arteiroId: number; pecas: A
     formData.append('nome', values.nome);
     formData.append('descricao', values.descricao);
     if (values.valorSugerido !== undefined) formData.append('valorSugerido', String(values.valorSugerido));
+    // Vai como JSON para que a lista vazia também seja enviada (remove todos os materiais).
+    formData.append('materialIds', JSON.stringify(materialIds));
     novasImagens.forEach((file) => formData.append('imagens', file));
 
     try {
@@ -152,6 +171,7 @@ export function PecasManager({ arteiroId, pecas }: { arteiroId: number; pecas: A
             <TableHead className="w-16" />
             <TableHead>Nome</TableHead>
             <TableHead>Valor sugerido</TableHead>
+            <TableHead>Materiais</TableHead>
             <TableHead>Descrição</TableHead>
             <TableHead className="w-20" />
           </TableRow>
@@ -159,7 +179,7 @@ export function PecasManager({ arteiroId, pecas }: { arteiroId: number; pecas: A
         <TableBody>
           {pecas.length === 0 && (
             <TableRow>
-              <TableCell colSpan={5} className="text-center text-muted-foreground">
+              <TableCell colSpan={6} className="text-center text-muted-foreground">
                 Nenhuma peça cadastrada.
               </TableCell>
             </TableRow>
@@ -180,6 +200,9 @@ export function PecasManager({ arteiroId, pecas }: { arteiroId: number; pecas: A
               </TableCell>
               <TableCell className="font-medium">{peca.nome}</TableCell>
               <TableCell className="text-muted-foreground">{formatMoeda(peca.valorSugerido)}</TableCell>
+              <TableCell className="max-w-[12rem] truncate text-muted-foreground" title={peca.materiais.map((m) => m.nome).join(', ')}>
+                {peca.materiais.length ? peca.materiais.map((material) => material.nome).join(', ') : '—'}
+              </TableCell>
               <TableCell className="max-w-xs truncate" title={peca.descricao}>
                 {peca.descricao}
               </TableCell>
@@ -220,6 +243,53 @@ export function PecasManager({ arteiroId, pecas }: { arteiroId: number; pecas: A
               <Label htmlFor="descricao">Descrição</Label>
               <Textarea id="descricao" {...register('descricao')} />
               {errors.descricao && <p className="text-sm text-destructive">{errors.descricao.message}</p>}
+            </div>
+
+            <div className="space-y-2">
+              <Label>Materiais</Label>
+              {/* value fixo em "": o select só adiciona; a remoção é feita nos chips abaixo. */}
+              <Select
+                value=""
+                onValueChange={(id) => setMaterialIds((atual) => (atual.includes(id) ? atual : [...atual, id]))}
+                disabled={materiaisDisponiveis.length === 0}
+              >
+                <SelectTrigger>
+                  <SelectValue
+                    placeholder={
+                      materiaisDisponiveis.length ? 'Adicionar material...' : 'Nenhum outro material disponível'
+                    }
+                  />
+                </SelectTrigger>
+                <SelectContent>
+                  {materiaisDisponiveis.map((material) => (
+                    <SelectItem key={material.id} value={material.id}>
+                      {material.nome}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {materialIds.length > 0 ? (
+                <div className="flex flex-wrap gap-2">
+                  {materialIds.map((id) => (
+                    <span
+                      key={id}
+                      className="inline-flex items-center gap-1 rounded-full bg-secondary py-1 pl-2.5 pr-1 text-xs font-medium"
+                    >
+                      {nomesMateriais.get(id) ?? 'Material'}
+                      <button
+                        type="button"
+                        onClick={() => setMaterialIds((atual) => atual.filter((item) => item !== id))}
+                        className="flex h-4 w-4 items-center justify-center rounded-full hover:bg-muted-foreground/20"
+                        aria-label={`Remover ${nomesMateriais.get(id) ?? 'material'}`}
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-xs text-muted-foreground">Nenhum material selecionado.</p>
+              )}
             </div>
 
             {editingPeca && editingPeca.imagens.length > 0 && (

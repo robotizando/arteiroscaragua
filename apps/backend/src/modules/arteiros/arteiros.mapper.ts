@@ -21,6 +21,14 @@ import type {
   ArteiroVideoRow,
 } from '../../database/client';
 
+export function arteiroLogotipoUrl(id: number, updatedAt: Date): string {
+  return `/api/arteiros/${id}/logotipo?v=${updatedAt.getTime()}`;
+}
+
+export function pecaImagemUrl(imagemId: number): string {
+  return `/api/arteiros/pecas/imagens/${imagemId}`;
+}
+
 export function toArteiroSummaryDTO(row: ArteiroRow): ArteiroSummary {
   return {
     id: row.id,
@@ -31,7 +39,7 @@ export function toArteiroSummaryDTO(row: ArteiroRow): ArteiroSummary {
     arroba: row.arroba,
     redesSociais: row.redesSociais,
     biografia: row.biografia,
-    logotipoUrl: row.logotipo ? `/api/arteiros/${row.id}/logotipo?v=${row.updatedAt.getTime()}` : null,
+    logotipoUrl: row.logotipo ? arteiroLogotipoUrl(row.id, row.updatedAt) : null,
     estado: row.estado,
     createdAt: row.createdAt.toISOString(),
     updatedAt: row.updatedAt.toISOString(),
@@ -42,12 +50,16 @@ export function toArteiroSummaryDTO(row: ArteiroRow): ArteiroSummary {
 export function toArteiroPecaImagemDTO(row: ArteiroPecaImagemRow): ArteiroPecaImagem {
   return {
     id: row.id,
-    url: `/api/arteiros/pecas/imagens/${row.id}`,
+    url: pecaImagemUrl(row.id),
     ordem: row.ordem,
   };
 }
 
-export function toArteiroPecaDTO(row: ArteiroPecaRow, imagens: ArteiroPecaImagemRow[]): ArteiroPeca {
+export function toArteiroPecaDTO(
+  row: ArteiroPecaRow,
+  imagens: ArteiroPecaImagemRow[],
+  materiais: ArteiroMaterialRef[],
+): ArteiroPeca {
   return {
     id: row.id,
     arteiroId: row.arteiroId,
@@ -55,6 +67,7 @@ export function toArteiroPecaDTO(row: ArteiroPecaRow, imagens: ArteiroPecaImagem
     valorSugerido: row.valorSugerido,
     descricao: row.descricao,
     imagens: imagens.map(toArteiroPecaImagemDTO),
+    materiais,
     createdAt: row.createdAt.toISOString(),
     updatedAt: row.updatedAt.toISOString(),
   };

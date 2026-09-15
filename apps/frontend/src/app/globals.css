@@ -1,0 +1,38 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Papel quente, tinta escura e terracota: tons de ateliê para não competir com as peças. */
+    --background: 36 33% 97%;
+    --foreground: 20 14% 13%;
+    --card: 0 0% 100%;
+    --card-foreground: 20 14% 13%;
+    --primary: 14 60% 41%;
+    --primary-foreground: 36 33% 98%;
+    --muted: 33 24% 92%;
+    --muted-foreground: 25 8% 40%;
+    --destructive: 0 65% 45%;
+    --destructive-foreground: 0 0% 100%;
+    --success: 152 45% 30%;
+    --success-foreground: 0 0% 100%;
+    --border: 30 18% 86%;
+    --input: 30 14% 80%;
+    --ring: 14 60% 41%;
+    --radius: 0.75rem;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 4.5rem;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
