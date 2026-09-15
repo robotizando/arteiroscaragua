@@ -1,0 +1,162 @@
+import { eq } from 'drizzle-orm';
+import { db, materiais } from './client';
+
+const SEED_MATERIAIS: Array<{ nome: string; slug: string; descricao: string; ordem: number }> = [
+  { nome: 'Algodão cru', slug: 'algodao-cru', descricao: 'Tecido de algodão sem tingimento, utilizado em bolsas, bonecas, decoração e peças artesanais.', ordem: 0 },
+  { nome: 'Algodão colorido', slug: 'algodao-colorido', descricao: 'Tecido de algodão tingido em diferentes cores para costura, patchwork e decoração.', ordem: 1 },
+  { nome: 'Linho', slug: 'linho', descricao: 'Fibra têxtil natural resistente, usada em roupas, acessórios, bordados e decoração.', ordem: 2 },
+  { nome: 'Juta', slug: 'juta', descricao: 'Fibra vegetal rústica utilizada em sacos, laços, embalagens, painéis e decoração.', ordem: 3 },
+  { nome: 'Sisal', slug: 'sisal', descricao: 'Fibra vegetal resistente utilizada em cordas, tapetes, cestos e peças decorativas.', ordem: 4 },
+  { nome: 'Palha de milho', slug: 'palha-de-milho', descricao: 'Material vegetal seco usado em bonecas, flores, cestaria e decoração.', ordem: 5 },
+  { nome: 'Palha de coqueiro', slug: 'palha-de-coqueiro', descricao: 'Fibra e folhas secas de coqueiro utilizadas em trançados, cestos e objetos decorativos.', ordem: 6 },
+  { nome: 'Bambu', slug: 'bambu', descricao: 'Material vegetal leve e resistente usado em cestaria, utensílios, estruturas e decoração.', ordem: 7 },
+  { nome: 'Madeira', slug: 'madeira', descricao: 'Material natural utilizado em esculturas, brinquedos, móveis, placas e objetos decorativos.', ordem: 8 },
+  { nome: 'Madeira de reflorestamento', slug: 'madeira-de-reflorestamento', descricao: 'Madeira proveniente de espécies cultivadas para produção sustentável de peças artesanais.', ordem: 9 },
+  { nome: 'MDF', slug: 'mdf', descricao: 'Painel de fibras de madeira prensadas, muito utilizado em recortes, pintura e decoração.', ordem: 10 },
+  { nome: 'Compensado', slug: 'compensado', descricao: 'Painel formado por lâminas de madeira coladas, utilizado em objetos, brinquedos e decoração.', ordem: 11 },
+  { nome: 'Galho seco', slug: 'galho-seco', descricao: 'Galhos naturais secos utilizados em arranjos, esculturas e decoração.', ordem: 12 },
+  { nome: 'Sementes naturais', slug: 'sementes-naturais', descricao: 'Sementes secas utilizadas em colares, pulseiras, arranjos e objetos decorativos.', ordem: 13 },
+  { nome: 'Cascas de coco', slug: 'cascas-de-coco', descricao: 'Parte rígida do coco utilizada em bowls, esculturas, acessórios e objetos decorativos.', ordem: 14 },
+  { nome: 'Cabaça', slug: 'cabaca', descricao: 'Fruto seco e rígido utilizado em instrumentos, recipientes, esculturas e peças decorativas.', ordem: 15 },
+  { nome: 'Barro', slug: 'barro', descricao: 'Argila natural utilizada na modelagem e produção de peças cerâmicas artesanais.', ordem: 16 },
+  { nome: 'Argila', slug: 'argila', descricao: 'Material plástico de origem mineral utilizado para modelagem e produção de cerâmica.', ordem: 17 },
+  { nome: 'Argila polimérica', slug: 'argila-polimerica', descricao: 'Massa sintética modelável que endurece após cozimento, usada em miniaturas e acessórios.', ordem: 18 },
+  { nome: 'Massa de biscuit', slug: 'massa-de-biscuit', descricao: 'Massa artesanal à base de amido utilizada para modelagem de figuras, flores e enfeites.', ordem: 19 },
+  { nome: 'Massa de modelar', slug: 'massa-de-modelar', descricao: 'Material maleável utilizado para modelagem artística e produção de protótipos.', ordem: 20 },
+  { nome: 'Gesso', slug: 'gesso', descricao: 'Material mineral em pó utilizado para moldagem, esculturas, relevos e peças decorativas.', ordem: 21 },
+  { nome: 'Cimento', slug: 'cimento', descricao: 'Material aglomerante utilizado em vasos, esculturas, objetos decorativos e peças de concreto artesanal.', ordem: 22 },
+  { nome: 'Resina epóxi', slug: 'resina-epoxi', descricao: 'Resina de dois componentes que endurece após mistura, utilizada em mesas, bijuterias e objetos decorativos.', ordem: 23 },
+  { nome: 'Resina acrílica', slug: 'resina-acrilica', descricao: 'Resina sintética utilizada em moldagem, revestimentos e produção de peças artesanais.', ordem: 24 },
+  { nome: 'Silicone para moldes', slug: 'silicone-para-moldes', descricao: 'Material elastomérico utilizado para criar moldes flexíveis de peças artesanais.', ordem: 25 },
+  { nome: 'Papel kraft', slug: 'papel-kraft', descricao: 'Papel resistente de aparência natural usado em embalagens, cartões, encadernação e decoração.', ordem: 26 },
+  { nome: 'Papel reciclado', slug: 'papel-reciclado', descricao: 'Papel produzido a partir de fibras reaproveitadas, utilizado em papelaria e artesanato.', ordem: 27 },
+  { nome: 'Papelão', slug: 'papelao', descricao: 'Material de fibras de papel mais espessas utilizado em maquetes, embalagens e estruturas artesanais.', ordem: 28 },
+  { nome: 'Papel cartão', slug: 'papel-cartao', descricao: 'Papel rígido utilizado em cartões, caixas, recortes e trabalhos de papelaria.', ordem: 29 },
+  { nome: 'Papel de seda', slug: 'papel-de-seda', descricao: 'Papel fino e leve utilizado em flores, decoupage, embalagens e decoração.', ordem: 30 },
+  { nome: 'Papel colorido', slug: 'papel-colorido', descricao: 'Papel pigmentado em diferentes cores utilizado em origami, colagem e papelaria.', ordem: 31 },
+  { nome: 'Cartolina', slug: 'cartolina', descricao: 'Papel espesso e colorido utilizado em recortes, cartões, moldes e trabalhos escolares e artesanais.', ordem: 32 },
+  { nome: 'EVA', slug: 'eva', descricao: 'Espuma sintética flexível utilizada em flores, bonecos, enfeites e trabalhos decorativos.', ordem: 33 },
+  { nome: 'Feltro', slug: 'feltro', descricao: 'Material têxtil não tecido utilizado em bonecos, enfeites, aplicações e acessórios.', ordem: 34 },
+  { nome: 'Lã', slug: 'la', descricao: 'Fibra têxtil utilizada em tricô, crochê, pompons, feltragem e decoração.', ordem: 35 },
+  { nome: 'Fio de algodão', slug: 'fio-de-algodao', descricao: 'Fio natural utilizado em crochê, macramê, bordado e tecelagem.', ordem: 36 },
+  { nome: 'Fio encerado', slug: 'fio-encerado', descricao: 'Fio revestido com cera utilizado principalmente em bijuterias, pulseiras e trabalhos de cordão.', ordem: 37 },
+  { nome: 'Fio de nylon', slug: 'fio-de-nylon', descricao: 'Fio sintético resistente utilizado em bijuterias, pesca artesanal, costura e montagem de peças.', ordem: 38 },
+  { nome: 'Fio de seda', slug: 'fio-de-seda', descricao: 'Fio fino e brilhante utilizado em bordados, joias artesanais e trabalhos têxteis.', ordem: 39 },
+  { nome: 'Barbante', slug: 'barbante', descricao: 'Fio grosso geralmente de algodão utilizado em crochê, macramê, embalagens e decoração.', ordem: 40 },
+  { nome: 'Cordão de algodão', slug: 'cordao-de-algodao', descricao: 'Cordão macio de fibras de algodão utilizado em macramê, bolsas, acessórios e decoração.', ordem: 41 },
+  { nome: 'Cordão de sisal', slug: 'cordao-de-sisal', descricao: 'Cordão produzido com fibra de sisal, utilizado em peças rústicas, embalagens e decoração.', ordem: 42 },
+  { nome: 'Corda de juta', slug: 'corda-de-juta', descricao: 'Corda de fibra de juta utilizada em decoração, macramê, embalagens e trabalhos rústicos.', ordem: 43 },
+  { nome: 'Arame galvanizado', slug: 'arame-galvanizado', descricao: 'Fio metálico com proteção contra corrosão utilizado em estruturas, esculturas e artesanato.', ordem: 44 },
+  { nome: 'Arame de alumínio', slug: 'arame-de-aluminio', descricao: 'Fio metálico leve e maleável utilizado em esculturas, bijuterias e estruturas artesanais.', ordem: 45 },
+  { nome: 'Arame de cobre', slug: 'arame-de-cobre', descricao: 'Fio metálico maleável utilizado em bijuterias, esculturas e trabalhos decorativos.', ordem: 46 },
+  { nome: 'Chapa de metal', slug: 'chapa-de-metal', descricao: 'Lâmina metálica utilizada em recortes, gravações, esculturas e objetos artesanais.', ordem: 47 },
+  { nome: 'Lata reciclada', slug: 'lata-reciclada', descricao: 'Recipiente metálico reaproveitado em vasos, luminárias, brinquedos e objetos decorativos.', ordem: 48 },
+  { nome: 'Alumínio reciclado', slug: 'aluminio-reciclado', descricao: 'Metal reaproveitado utilizado em esculturas, objetos decorativos e peças artesanais.', ordem: 49 },
+  { nome: 'Vidro', slug: 'vidro', descricao: 'Material rígido utilizado em mosaicos, decoração, recipientes e peças artesanais.', ordem: 50 },
+  { nome: 'Garrafa de vidro', slug: 'garrafa-de-vidro', descricao: 'Recipiente reaproveitado em vasos, luminárias, terrários e objetos decorativos.', ordem: 51 },
+  { nome: 'Espelho', slug: 'espelho', descricao: 'Material refletivo utilizado em mosaicos, decoração e composição de peças artesanais.', ordem: 52 },
+  { nome: 'Azulejo', slug: 'azulejo', descricao: 'Peça cerâmica utilizada em mosaicos, painéis, bandejas e decoração.', ordem: 53 },
+  { nome: 'Cerâmica', slug: 'ceramica', descricao: 'Material queimado à base de argila utilizado em vasos, esculturas, utensílios e objetos decorativos.', ordem: 54 },
+  { nome: 'Porcelana fria', slug: 'porcelana-fria', descricao: 'Material de modelagem de acabamento delicado utilizado em miniaturas e decoração.', ordem: 55 },
+  { nome: 'Pedra natural', slug: 'pedra-natural', descricao: 'Fragmentos ou peças de pedra utilizados em esculturas, mandalas, mosaicos e decoração.', ordem: 56 },
+  { nome: 'Pedra-sabão', slug: 'pedra-sabao', descricao: 'Pedra macia e relativamente fácil de esculpir, utilizada em esculturas e objetos decorativos.', ordem: 57 },
+  { nome: 'Mármore', slug: 'marmore', descricao: 'Rocha ornamental utilizada em mosaicos, esculturas e objetos decorativos.', ordem: 58 },
+  { nome: 'Granito', slug: 'granito', descricao: 'Rocha resistente utilizada em peças decorativas, bases e trabalhos de acabamento.', ordem: 59 },
+  { nome: 'Conchas', slug: 'conchas', descricao: 'Elementos naturais utilizados em bijuterias, mosaicos, decoração e trabalhos litorâneos.', ordem: 60 },
+  { nome: 'Pedras semipreciosas', slug: 'pedras-semipreciosas', descricao: 'Pedras naturais utilizadas em bijuterias, acessórios, mandalas e objetos decorativos.', ordem: 61 },
+  { nome: 'Miçangas', slug: 'micangas', descricao: 'Pequenas contas decorativas utilizadas em colares, pulseiras, bordados e acessórios.', ordem: 62 },
+  { nome: 'Contas de madeira', slug: 'contas-de-madeira', descricao: 'Pequenas peças de madeira perfuradas utilizadas em bijuterias e decoração.', ordem: 63 },
+  { nome: 'Contas de vidro', slug: 'contas-de-vidro', descricao: 'Contas produzidas em vidro utilizadas em colares, pulseiras e trabalhos decorativos.', ordem: 64 },
+  { nome: 'Contas de cerâmica', slug: 'contas-de-ceramica', descricao: 'Contas moldadas e queimadas em cerâmica utilizadas em bijuterias e acessórios.', ordem: 65 },
+  { nome: 'Botões', slug: 'botoes', descricao: 'Pequenos elementos decorativos utilizados em costura, bonecos, colagens e acessórios.', ordem: 66 },
+  { nome: 'Fita de cetim', slug: 'fita-de-cetim', descricao: 'Fita têxtil lisa e brilhante utilizada em laços, embalagens, flores e decoração.', ordem: 67 },
+  { nome: 'Fita de renda', slug: 'fita-de-renda', descricao: 'Fita com trama vazada utilizada em costura, decoração, acessórios e acabamento.', ordem: 68 },
+  { nome: 'Renda', slug: 'renda', descricao: 'Material têxtil vazado utilizado em roupas, decoração, aplicações e peças artesanais.', ordem: 69 },
+  { nome: 'Tecido chita', slug: 'tecido-chita', descricao: 'Tecido de algodão estampado e colorido tradicionalmente usado em peças artesanais brasileiras.', ordem: 70 },
+  { nome: 'Tecido jeans', slug: 'tecido-jeans', descricao: 'Tecido resistente de algodão utilizado em bolsas, acessórios, bonecos e reaproveitamento.', ordem: 71 },
+  { nome: 'Retalho de tecido', slug: 'retalho-de-tecido', descricao: 'Sobras de tecidos utilizadas em patchwork, colagens, bonecos e reaproveitamento.', ordem: 72 },
+  { nome: 'Couro', slug: 'couro', descricao: 'Material natural resistente utilizado em bolsas, carteiras, cintos, acessórios e trabalhos de corte.', ordem: 73 },
+  { nome: 'Couro sintético', slug: 'couro-sintetico', descricao: 'Material sintético com aparência de couro utilizado em acessórios, bolsas e peças decorativas.', ordem: 74 },
+  { nome: 'Camurça', slug: 'camurca', descricao: 'Material de textura macia utilizado em acessórios, bijuterias e trabalhos de acabamento.', ordem: 75 },
+  { nome: 'Borracha', slug: 'borracha', descricao: 'Material flexível utilizado em moldes, carimbos, acessórios e reaproveitamento artesanal.', ordem: 76 },
+  { nome: 'Borracha EVA', slug: 'borracha-eva', descricao: 'Espuma de borracha sintética utilizada em moldagem, decoração e trabalhos artesanais.', ordem: 77 },
+  { nome: 'Plástico reciclado', slug: 'plastico-reciclado', descricao: 'Material plástico reaproveitado utilizado em objetos, mosaicos, decoração e arte sustentável.', ordem: 78 },
+  { nome: 'Tampinhas plásticas', slug: 'tampinhas-plasticas', descricao: 'Tampas reaproveitadas de embalagens utilizadas em mosaicos, brinquedos e objetos decorativos.', ordem: 79 },
+  { nome: 'PET reciclado', slug: 'pet-reciclado', descricao: 'Material proveniente de garrafas PET reaproveitadas em decoração, estruturas e objetos artesanais.', ordem: 80 },
+  { nome: 'CD/DVD reciclado', slug: 'cd-dvd-reciclado', descricao: 'Mídias ópticas reaproveitadas em mosaicos, mandalas, decoração e instalações artísticas.', ordem: 81 },
+  { nome: 'Papel de jornal', slug: 'papel-de-jornal', descricao: 'Papel de jornal reaproveitado em papel machê, cestaria, colagem e decoração.', ordem: 82 },
+  { nome: 'Revista', slug: 'revista', descricao: 'Páginas impressas reaproveitadas em colagens, mosaicos, papel trançado e decoração.', ordem: 83 },
+  { nome: 'Rolha de cortiça', slug: 'rolha-de-cortica', descricao: 'Material natural leve utilizado em miniaturas, carimbos, decoração e objetos artesanais.', ordem: 84 },
+  { nome: 'Rolha sintética', slug: 'rolha-sintetica', descricao: 'Rolha produzida com material sintético utilizada em reaproveitamento e peças decorativas.', ordem: 85 },
+  { nome: 'Caixa de papelão reciclada', slug: 'caixa-de-papelao-reciclada', descricao: 'Estrutura de papelão reaproveitada para maquetes, organizadores e objetos artesanais.', ordem: 86 },
+  { nome: 'Palito de madeira', slug: 'palito-de-madeira', descricao: 'Pequenos bastões de madeira utilizados em miniaturas, estruturas e trabalhos decorativos.', ordem: 87 },
+  { nome: 'Picolé de madeira', slug: 'picole-de-madeira', descricao: 'Palitos de madeira reaproveitados ou novos utilizados em miniaturas, mosaicos e estruturas.', ordem: 88 },
+  { nome: 'Serapilheira', slug: 'serapilheira', descricao: 'Tecido rústico de fibras vegetais utilizado em decoração, bolsas, embalagens e trabalhos artesanais.', ordem: 89 },
+  { nome: 'Tela de pintura', slug: 'tela-de-pintura', descricao: 'Superfície preparada para pintura artística, geralmente montada sobre uma estrutura rígida.', ordem: 90 },
+  { nome: 'Tinta acrílica', slug: 'tinta-acrilica', descricao: 'Tinta à base de polímero acrílico utilizada em madeira, tela, cerâmica e diversas superfícies.', ordem: 91 },
+  { nome: 'Tinta PVA', slug: 'tinta-pva', descricao: 'Tinta à base de acetato de polivinila utilizada principalmente em madeira, MDF e artesanato.', ordem: 92 },
+  { nome: 'Tinta guache', slug: 'tinta-guache', descricao: 'Tinta à base de água com acabamento opaco utilizada em papel e trabalhos artísticos.', ordem: 93 },
+  { nome: 'Tinta para tecido', slug: 'tinta-para-tecido', descricao: 'Tinta formulada para aderir a tecidos naturais e sintéticos, utilizada em pintura e customização.', ordem: 94 },
+  { nome: 'Tinta spray', slug: 'tinta-spray', descricao: 'Tinta aplicada por aerossol utilizada em pintura e acabamento de diferentes materiais.', ordem: 95 },
+  { nome: 'Verniz', slug: 'verniz', descricao: 'Produto de acabamento que protege e pode alterar o brilho de superfícies artesanais.', ordem: 96 },
+  { nome: 'Betume', slug: 'betume', descricao: 'Produto utilizado para envelhecimento, sombreamento e efeitos decorativos em peças artesanais.', ordem: 97 },
+  { nome: 'Cola branca', slug: 'cola-branca', descricao: 'Adesivo à base de água utilizado em papel, madeira, tecido e diversos trabalhos artesanais.', ordem: 98 },
+  { nome: 'Cola quente', slug: 'cola-quente', descricao: 'Adesivo termoplástico aplicado com pistola de cola quente para fixações rápidas.', ordem: 99 },
+  { nome: 'Cola de contato', slug: 'cola-de-contato', descricao: 'Adesivo de alta aderência utilizado para unir materiais como couro, borracha e laminados.', ordem: 100 },
+  { nome: 'Cola para tecido', slug: 'cola-para-tecido', descricao: 'Adesivo formulado para unir tecidos e aplicações têxteis sem necessidade de costura.', ordem: 101 },
+  { nome: 'Cola instantânea', slug: 'cola-instantanea', descricao: 'Adesivo de cura rápida utilizado para pequenas peças e materiais diversos.', ordem: 102 },
+  { nome: 'Massa corrida', slug: 'massa-corrida', descricao: 'Material de preenchimento utilizado para nivelar superfícies antes da pintura ou acabamento.', ordem: 103 },
+  { nome: 'Goma laca', slug: 'goma-laca', descricao: 'Produto de acabamento tradicional utilizado para selar e proteger madeira e outras superfícies.', ordem: 104 },
+  { nome: 'Parafina', slug: 'parafina', descricao: 'Material ceroso utilizado na produção artesanal de velas e objetos decorativos.', ordem: 105 },
+  { nome: 'Cera de abelha', slug: 'cera-de-abelha', descricao: 'Cera natural utilizada em velas, acabamentos, polimentos e trabalhos artesanais.', ordem: 106 },
+  { nome: 'Pavio', slug: 'pavio', descricao: 'Cordão combustível utilizado na fabricação de velas artesanais.', ordem: 107 },
+  { nome: 'Sabão glicerinado', slug: 'sabao-glicerinado', descricao: 'Base utilizada para produção artesanal de sabonetes por processo de derretimento e moldagem.', ordem: 108 },
+  { nome: 'Essência aromática', slug: 'essencia-aromatica', descricao: 'Composto aromático utilizado para perfumar velas, sabonetes e produtos artesanais.', ordem: 109 },
+  { nome: 'Pigmento', slug: 'pigmento', descricao: 'Material utilizado para adicionar cor a tintas, massas, resinas e outros produtos artesanais.', ordem: 110 },
+  { nome: 'Glitter', slug: 'glitter', descricao: 'Partículas decorativas brilhantes utilizadas em pintura, papelaria e decoração.', ordem: 111 },
+  { nome: 'Folha de ouro', slug: 'folha-de-ouro', descricao: 'Lâmina metálica muito fina utilizada em douração e acabamento decorativo.', ordem: 112 },
+  { nome: 'Folha de prata', slug: 'folha-de-prata', descricao: 'Lâmina metálica fina utilizada em técnicas de douração e acabamento artístico.', ordem: 113 },
+  { nome: 'Moldura de madeira', slug: 'moldura-de-madeira', descricao: 'Estrutura de madeira utilizada para enquadrar pinturas, fotografias e trabalhos artesanais.', ordem: 114 },
+  { nome: 'Base de MDF', slug: 'base-de-mdf', descricao: 'Peça pré-cortada de MDF utilizada como suporte para pintura, decoração e personalização.', ordem: 115 },
+  { nome: 'Tecido para bordado', slug: 'tecido-para-bordado', descricao: 'Tecido com trama adequada para receber pontos de bordado manual.', ordem: 116 },
+  { nome: 'Linha de bordado', slug: 'linha-de-bordado', descricao: 'Linha colorida, geralmente de algodão, utilizada em bordado manual e ponto cruz.', ordem: 117 },
+  { nome: 'Agulha de bordado', slug: 'agulha-de-bordado', descricao: 'Agulha fina utilizada para executar diferentes técnicas de bordado.', ordem: 118 },
+  { nome: 'Agulha de crochê', slug: 'agulha-de-croche', descricao: 'Ferramenta com gancho utilizada para criar peças a partir de fios.', ordem: 119 },
+  { nome: 'Agulha de tricô', slug: 'agulha-de-trico', descricao: 'Ferramenta longa utilizada para produzir peças de tricô com fios.', ordem: 120 },
+  { nome: 'Tesoura', slug: 'tesoura', descricao: 'Ferramenta de corte utilizada em tecidos, papéis, fios e outros materiais artesanais.', ordem: 121 },
+  { nome: 'Estilete', slug: 'estilete', descricao: 'Ferramenta de lâmina retrátil utilizada para cortes precisos em papel, papelão, EVA e materiais similares.', ordem: 122 },
+  { nome: 'Lixa', slug: 'lixa', descricao: 'Material abrasivo utilizado para desgastar, nivelar e dar acabamento a superfícies.', ordem: 123 },
+  { nome: 'Pincel', slug: 'pincel', descricao: 'Ferramenta utilizada para aplicar tintas, vernizes, colas e outros produtos.', ordem: 124 },
+  { nome: 'Espátula', slug: 'espatula', descricao: 'Ferramenta utilizada para aplicar massas, tintas, colas e materiais de acabamento.', ordem: 125 },
+  { nome: 'Molde de silicone', slug: 'molde-de-silicone', descricao: 'Molde flexível reutilizável utilizado para reproduzir peças em resina, gesso, sabonete e outros materiais.', ordem: 126 }
+
+];
+
+async function seed() {
+  let created = 0;
+  let skipped = 0;
+
+  for (const item of SEED_MATERIAIS) {
+    const [existing] = await db.select().from(materiais).where(eq(materiais.slug, item.slug));
+    if (existing) {
+      skipped += 1;
+      continue;
+    }
+
+    await db.insert(materiais).values({
+      nome: item.nome,
+      slug: item.slug,
+      descricao: item.descricao,
+      ordem: item.ordem,
+      estado: 'ativo',
+    });
+    created += 1;
+  }
+
+  console.log(`✓ Materiais criados: ${created} | já existentes: ${skipped}`);
+}
+
+seed().catch((error) => {
+  console.error('Erro ao rodar o seed de materiais:', error);
+  process.exitCode = 1;
+});

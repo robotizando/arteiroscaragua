@@ -1,0 +1,25 @@
+node_modules/
+dist/
+.next/
+.turbo/
+*.tsbuildinfo
+next-env.d.ts
+
+# env
+.env
+.env.local
+.env.*.local
+
+# sqlite
+apps/backend/data/*.sqlite
+apps/backend/data/*.sqlite-journal
+apps/backend/data/*.sqlite-shm
+apps/backend/data/*.sqlite-wal
+
+# logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# os
+.DS_Store
