@@ -5,7 +5,7 @@ import { AlertCircle, CheckCircle2, Eye, EyeOff, Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export const inputClassName =
-  'flex h-11 w-full rounded-lg border border-input bg-card px-3 text-base text-foreground shadow-sm transition-colors placeholder:text-muted-foreground/70 focus-visible:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30 disabled:cursor-not-allowed disabled:opacity-60 sm:text-sm aria-[invalid=true]:border-destructive';
+  'flex h-11 w-full border-2 border-foreground bg-card px-3 text-base text-foreground transition-colors duration-150 placeholder:text-muted-foreground focus-visible:border-primary disabled:cursor-not-allowed disabled:opacity-60 sm:text-[14px] aria-[invalid=true]:border-destructive';
 
 export const Input = React.forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement>>(
   ({ className, ...props }, ref) => <input ref={ref} className={cn(inputClassName, className)} {...props} />,

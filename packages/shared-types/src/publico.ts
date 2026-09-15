@@ -71,8 +71,23 @@ export interface ListPublicoPecasResult {
   pageSize: number;
 }
 
-// Opções dos filtros da vitrine: só materiais e arteiros que têm peças publicadas.
+export interface ListPublicoArteirosQuery {
+  // 'recentes': cadastrados mais recentemente primeiro; 'nome': ordem alfabética (catálogo).
+  ordem?: 'recentes' | 'nome';
+  page?: number;
+  pageSize?: number;
+}
+
+export interface ListPublicoArteirosResult {
+  items: PublicoArteiroResumo[];
+  total: number;
+  page: number;
+  pageSize: number;
+}
+
+// Opções dos filtros da vitrine: só materiais e arteiros que têm peças publicadas,
+// cada um com o total de peças que o filtro encontra.
 export interface PublicoFiltros {
-  materiais: ArteiroMaterialRef[];
-  arteiros: { id: number; nome: string }[];
+  materiais: (ArteiroMaterialRef & { thumbnailUrl: string | null; totalPecas: number })[];
+  arteiros: { id: number; nome: string; totalPecas: number; createdAt: string }[];
 }

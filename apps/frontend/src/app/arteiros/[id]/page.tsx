@@ -62,7 +62,7 @@ export default async function ArteiroPage({ params }: { params: Params }) {
   return (
     <div className="container py-6 sm:py-10">
       <nav aria-label="Você está em" className="mb-6 flex items-center gap-1 text-sm text-muted-foreground">
-        <Link href="/#arteiros" className="hover:text-foreground">
+        <Link href="/arteiros" className="hover:text-foreground">
           Arteiros
         </Link>
         <ChevronRight className="h-3.5 w-3.5" aria-hidden />

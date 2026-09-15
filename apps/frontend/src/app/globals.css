@@ -3,24 +3,118 @@
 @tailwind utilities;
 
 @layer base {
+  /* Arteiros Caraguá — tokens v2 (design_handoff_home_vitrine/tokens/arteiros-tokens.css).
+     Paleta Mata Atlântica, mar, coral e areia; estrutura Modernist: raio 0, réguas de 2px, Archivo.
+     --font-sans vem do next/font em layout.tsx. */
   :root {
-    /* Papel quente, tinta escura e terracota: tons de ateliê para não competir com as peças. */
-    --background: 36 33% 97%;
-    --foreground: 20 14% 13%;
+    /* — papéis (hsl(var(--x))) — */
+    --background: 42 36% 95%; /* #F6F3EC */
+    --foreground: 195 27% 15%; /* #1B2A2F */
     --card: 0 0% 100%;
-    --card-foreground: 20 14% 13%;
-    --primary: 14 60% 41%;
-    --primary-foreground: 36 33% 98%;
-    --muted: 33 24% 92%;
-    --muted-foreground: 25 8% 40%;
-    --destructive: 0 65% 45%;
+    --card-foreground: 195 27% 15%;
+    --primary: 144 61% 30%; /* #1E7A43 */
+    --primary-foreground: 42 36% 95%;
+    --secondary: 190 64% 34%; /* #1F7A8C */
+    --secondary-foreground: 42 36% 95%;
+    --accent: 0 68% 63%; /* #E0605F */
+    --accent-foreground: 195 27% 15%;
+    --muted: 41 28% 89%; /* #EAE5DA */
+    --muted-foreground: 190 9% 40%; /* #5C6B6E */
+    --destructive: 3 59% 45%; /* #B8362F */
     --destructive-foreground: 0 0% 100%;
-    --success: 152 45% 30%;
+    --success: 144 61% 30%;
     --success-foreground: 0 0% 100%;
-    --border: 30 18% 86%;
-    --input: 30 14% 80%;
-    --ring: 14 60% 41%;
-    --radius: 0.75rem;
+    --whatsapp: 142 70% 49%; /* #25D366 */
+    --whatsapp-foreground: 141 48% 8%;
+    --border: 41 20% 81%; /* #D9D3C6 */
+    --input: 41 17% 75%; /* #C9C2B3 */
+    --ring: 144 61% 30%;
+    --divider: 195 27% 15%;
+    --header: 195 27% 15%;
+    --header-foreground: 42 36% 95%;
+    --radius: 0px;
+
+    /* — rampas — */
+    --mata-100: #eaf6ee;
+    --mata-200: #cfebd8;
+    --mata-300: #b5dca1;
+    --mata-400: #6cc08a;
+    --mata-500: #2aaa4c;
+    --mata-600: #1e7a43;
+    --mata-700: #155c33;
+    --mata-800: #0f4225;
+    --mata-900: #0a2c19;
+
+    --mar-100: #e8f6f8;
+    --mar-200: #c6eaee;
+    --mar-300: #a6e3e9;
+    --mar-400: #5fc0cc;
+    --mar-500: #2e9faf;
+    --mar-600: #1f7a8c;
+    --mar-700: #165a68;
+    --mar-800: #0f4049;
+    --mar-900: #0a2a31;
+
+    --coral-100: #fdefef;
+    --coral-200: #fde3e4;
+    --coral-300: #ffc3c7;
+    --coral-400: #ff8c94;
+    --coral-500: #f0716f;
+    --coral-600: #e0605f;
+    --coral-700: #b8464a;
+    --coral-800: #8a3236;
+    --coral-900: #5a2225;
+
+    --areia-100: #fbf5ec;
+    --areia-200: #f9ddbd;
+    --areia-300: #edcb9f;
+    --areia-400: #ddb587;
+    --areia-500: #c79a66;
+    --areia-600: #a97d4c;
+    --areia-700: #845f38;
+    --areia-800: #5f4427;
+    --areia-900: #3d2b18;
+
+    --neutro-100: #f6f3ec;
+    --neutro-200: #eae5da;
+    --neutro-300: #d9d3c6;
+    --neutro-400: #b9b3a6;
+    --neutro-500: #948f86;
+    --neutro-600: #6f6d68;
+    --neutro-700: #5c6b6e;
+    --neutro-800: #3b474b;
+    --neutro-900: #1b2a2f;
+
+    /* — tipografia — */
+    --font-display: var(--font-sans);
+    --font-display-weight: 800;
+    --text-xs: 11px;
+    --text-sm: 13px;
+    --text-base: 15px;
+    --text-lg: 18px;
+    --text-xl: 22px;
+    --text-2xl: 28px;
+    --text-3xl: 36px;
+    --text-4xl: 48px;
+    --leading-tight: 1.08;
+    --leading-normal: 1.5;
+    --tracking-tight: -0.02em;
+    --tracking-caps: 0.08em;
+
+    /* — estrutura — */
+    --header-height: 56px;
+    --container-max: 1320px;
+    --rule: 2px;
+    --grid-line: 1px;
+    --divider-color: hsl(var(--divider) / 0.4);
+    --grid-line-color: hsl(var(--divider) / 0.18);
+
+    /* — elevação — */
+    --shadow-sm: 0 1px 2px hsl(var(--divider) / 0.14);
+    --shadow-md: 0 3px 10px hsl(var(--divider) / 0.16);
+    --shadow-lg: 0 12px 32px hsl(var(--divider) / 0.22);
+
+    --peca-aspect: 4 / 5;
   }
 
   * {
@@ -29,10 +123,26 @@
 
   html {
     scroll-behavior: smooth;
-    scroll-padding-top: 4.5rem;
+    /* Altura do cabeçalho fixo + folga, para as âncoras (#pecas, #arteiros) não ficarem por baixo dele. */
+    scroll-padding-top: 92px;
+  }
+
+  @media (min-width: 1024px) {
+    html {
+      scroll-padding-top: 152px;
+    }
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-base text-foreground;
+  }
+
+  :focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background: var(--mata-200);
   }
 }

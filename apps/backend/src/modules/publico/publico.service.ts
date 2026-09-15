@@ -2,6 +2,8 @@ import { and, asc, desc, eq, exists, inArray, isNull, ne, or, sql } from 'drizzl
 import type {
   ArteiroMaterialRef,
   ArteiroPecaImagem,
+  ListPublicoArteirosQuery,
+  ListPublicoArteirosResult,
   ListPublicoPecasQuery,
   ListPublicoPecasResult,
   PublicoArteiro,
@@ -36,16 +38,14 @@ import {
   toArteiroVideoDTO,
 } from '../arteiros/arteiros.mapper';
 import { loadPecaMateriais } from '../arteiros/pecas.service';
+import { materialThumbnailUrl } from '../materiais/materiais.mapper';
 
 const PAGE_SIZE_PADRAO = 24;
 const MAX_PAGE_SIZE = 60;
 const MAX_OUTRAS_PECAS = 8;
-const MAX_ARTEIROS_RECENTES = 24;
 
 // Só arteiros ativos e não excluídos aparecem no site.
 const arteiroPublico = and(isNull(arteiros.deletedAt), eq(arteiros.estado, 'ativo'));
-
-const temPecas = exists(db.select({ um: sql`1` }).from(arteiroPecas).where(eq(arteiroPecas.arteiroId, arteiros.id)));
 
 // Colunas explícitas: as tabelas guardam imagens em blob, que não devem ser lidas nas listagens.
 const temLogotipo = sql<boolean>`(${arteiros.logotipo} is not null)`.mapWith(Boolean);
@@ -289,12 +289,25 @@ export async function getPeca(id: number): Promise<PublicoPecaDetalhe> {
   };
 }
 
-export async function listArteirosRecentes(limit?: number): Promise<PublicoArteiroResumo[]> {
-  const rows = await selectArteiros()
-    .where(arteiroPublico)
-    .orderBy(desc(arteiros.createdAt), desc(arteiros.id))
-    .limit(Math.min(MAX_ARTEIROS_RECENTES, Math.max(1, limit ?? 8)));
-  return toArteiroResumos(rows);
+export async function listArteiros(query: ListPublicoArteirosQuery): Promise<ListPublicoArteirosResult> {
+  const page = Math.max(1, query.page ?? 1);
+  const pageSize = Math.min(MAX_PAGE_SIZE, Math.max(1, query.pageSize ?? PAGE_SIZE_PADRAO));
+  // Ordem alfabética sem acentos, para "Érica" ficar junto dos nomes com E.
+  const ordem =
+    query.ordem === 'nome'
+      ? [asc(sql`normalizar(${arteiros.nome})`), asc(arteiros.id)]
+      : [desc(arteiros.createdAt), desc(arteiros.id)];
+
+  const [rows, [{ total }]] = await Promise.all([
+    selectArteiros()
+      .where(arteiroPublico)
+      .orderBy(...ordem)
+      .limit(pageSize)
+      .offset((page - 1) * pageSize),
+    db.select({ total: sql<number>`count(*)` }).from(arteiros).where(arteiroPublico),
+  ]);
+
+  return { items: await toArteiroResumos(rows), total, page, pageSize };
 }
 
 export async function getArteiro(id: number): Promise<PublicoArteiro> {
@@ -324,37 +337,63 @@ export async function getArteiro(id: number): Promise<PublicoArteiro> {
 
 export async function getFiltros(): Promise<PublicoFiltros> {
   const materialAtivo = and(isNull(materiais.deletedAt), eq(materiais.estado, 'ativo'));
-  const materialColunas = { id: materiais.id, nome: materiais.nome, ordem: materiais.ordem };
+  const materialPecaColunas = {
+    id: materiais.id,
+    nome: materiais.nome,
+    ordem: materiais.ordem,
+    temThumbnail: sql<boolean>`(${materiais.thumbnail} is not null)`.mapWith(Boolean),
+    updatedAt: materiais.updatedAt,
+    pecaId: arteiroPecas.id,
+  };
 
-  // Mesmo critério do filtro: materiais dos arteiros com peças OU materiais das próprias peças.
+  // Mesmo critério do filtro: a peça conta para o material do arteiro OU para os materiais dela.
   const [doArteiro, daPeca, arteirosRows] = await Promise.all([
     db
-      .selectDistinct(materialColunas)
+      .selectDistinct(materialPecaColunas)
       .from(arteiroMateriais)
       .innerJoin(materiais, eq(materiais.id, arteiroMateriais.materialId))
       .innerJoin(arteiros, eq(arteiros.id, arteiroMateriais.arteiroId))
-      .where(and(arteiroPublico, temPecas, materialAtivo)),
+      .innerJoin(arteiroPecas, eq(arteiroPecas.arteiroId, arteiros.id))
+      .where(and(arteiroPublico, materialAtivo)),
     db
-      .selectDistinct(materialColunas)
+      .selectDistinct(materialPecaColunas)
       .from(arteiroPecaMateriais)
       .innerJoin(materiais, eq(materiais.id, arteiroPecaMateriais.materialId))
       .innerJoin(arteiroPecas, eq(arteiroPecas.id, arteiroPecaMateriais.pecaId))
       .innerJoin(arteiros, eq(arteiros.id, arteiroPecas.arteiroId))
       .where(and(arteiroPublico, materialAtivo)),
     db
-      .select({ id: arteiros.id, nome: arteiros.nome })
+      .select({
+        id: arteiros.id,
+        nome: arteiros.nome,
+        totalPecas: sql<number>`count(*)`,
+        createdAt: arteiros.createdAt,
+      })
       .from(arteiros)
-      .where(and(arteiroPublico, temPecas))
+      .innerJoin(arteiroPecas, eq(arteiroPecas.arteiroId, arteiros.id))
+      .where(arteiroPublico)
+      .groupBy(arteiros.id)
       .orderBy(asc(arteiros.nome)),
   ]);
 
-  const unicos = new Map([...doArteiro, ...daPeca].map((material) => [material.id, material]));
-  const materiaisOrdenados = Array.from(unicos.values()).sort(
+  // Uma peça pode aparecer pelas duas origens: o Set evita contá-la duas vezes.
+  const pecasPorMaterial = new Map<string, Omit<(typeof doArteiro)[number], 'pecaId'> & { pecas: Set<number> }>();
+  for (const { pecaId, ...material } of [...doArteiro, ...daPeca]) {
+    const atual = pecasPorMaterial.get(material.id) ?? { ...material, pecas: new Set<number>() };
+    atual.pecas.add(pecaId);
+    pecasPorMaterial.set(material.id, atual);
+  }
+  const materiaisOrdenados = Array.from(pecasPorMaterial.values()).sort(
     (a, b) => a.ordem - b.ordem || a.nome.localeCompare(b.nome, 'pt-BR'),
   );
 
   return {
-    materiais: materiaisOrdenados.map(({ id, nome }) => ({ id, nome })),
-    arteiros: arteirosRows,
+    materiais: materiaisOrdenados.map(({ id, nome, temThumbnail, updatedAt, pecas }) => ({
+      id,
+      nome,
+      thumbnailUrl: temThumbnail ? materialThumbnailUrl(id, updatedAt) : null,
+      totalPecas: pecas.size,
+    })),
+    arteiros: arteirosRows.map((arteiro) => ({ ...arteiro, createdAt: arteiro.createdAt.toISOString() })),
   };
 }

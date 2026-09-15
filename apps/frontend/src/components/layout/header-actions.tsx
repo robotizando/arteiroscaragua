@@ -4,8 +4,9 @@ import Link from 'next/link';
 import { LogOut } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
 import { primeiroNome } from '@/lib/utils';
-import { Button, buttonClassName } from '@/components/ui/button';
+import { buttonClassName } from '@/components/ui/button';
 
+// Ações do cabeçalho no desktop (sobre o verde). No mobile ficam em MenuMobile.
 export function HeaderActions() {
   const { usuario, sair } = useAuth();
 
@@ -13,27 +14,30 @@ export function HeaderActions() {
   // que também são as que o HTML do servidor já traz.
   if (usuario) {
     return (
-      <div className="flex items-center gap-2">
-        <span className="hidden text-sm text-muted-foreground sm:inline">
-          Olá, <span className="font-medium text-foreground">{primeiroNome(usuario.nome)}</span>
+      <>
+        <span className="text-mata-300">
+          Olá, <span className="font-semibold text-background">{primeiroNome(usuario.nome)}</span>
         </span>
-        <Button variant="ghost" size="sm" onClick={sair}>
-          <LogOut className="h-4 w-4" />
+        <button
+          type="button"
+          onClick={sair}
+          className="flex items-center gap-1.5 text-mata-300 transition-colors duration-150 hover:text-background"
+        >
+          <LogOut className="h-4 w-4" aria-hidden />
           Sair
-        </Button>
-      </div>
+        </button>
+      </>
     );
   }
 
   return (
-    <div className="flex items-center gap-1 sm:gap-2">
-      <Link href="/entrar" className={buttonClassName({ variant: 'ghost', size: 'sm' })}>
+    <>
+      <Link href="/entrar" className="text-mata-300 transition-colors duration-150 hover:text-background">
         Entrar
       </Link>
-      <Link href="/cadastro" className={buttonClassName({ size: 'sm' })}>
-        <span className="sm:hidden">Cadastre-se</span>
-        <span className="hidden sm:inline">Cadastre-se Arteiro/Artesão</span>
+      <Link href="/cadastro" className={buttonClassName({ variant: 'claro', size: 'sm' })}>
+        Tornar-se arteiro
       </Link>
-    </div>
+    </>
   );
 }

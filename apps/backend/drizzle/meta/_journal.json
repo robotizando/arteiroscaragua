@@ -71,6 +71,13 @@
       "when": 1789490526042,
       "tag": "0009_peca_materiais",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "6",
+      "when": 1789496833287,
+      "tag": "0010_configuracoes_site_destaque",
+      "breakpoints": true
     }
   ]
 }

@@ -8,9 +8,12 @@ interface PaginacaoProps {
   total: number;
   // Filtros atuais, mantidos nos links.
   params: Record<string, string>;
+  // Página e âncora dos links (padrão: vitrine de peças da home).
+  basePath?: string;
+  ancora?: string;
 }
 
-export function Paginacao({ page, pageSize, total, params }: PaginacaoProps) {
+export function Paginacao({ page, pageSize, total, params, basePath = '/', ancora = 'pecas' }: PaginacaoProps) {
   const totalPaginas = Math.ceil(total / pageSize);
   if (totalPaginas <= 1) return null;
 
@@ -18,13 +21,13 @@ export function Paginacao({ page, pageSize, total, params }: PaginacaoProps) {
     const search = new URLSearchParams(params);
     if (pagina > 1) search.set('pagina', String(pagina));
     const query = search.toString();
-    return `/${query ? `?${query}` : ''}#pecas`;
+    return `${basePath}${query ? `?${query}` : ''}#${ancora}`;
   }
 
   const desabilitado = buttonClassName({ variant: 'outline', className: 'pointer-events-none opacity-40' });
 
   return (
-    <nav aria-label="Paginação" className="mt-12 flex items-center justify-center gap-3">
+    <nav aria-label="Paginação" className="mt-12 flex items-center gap-3">
       {page > 1 ? (
         <Link href={href(page - 1)} className={buttonClassName({ variant: 'outline' })} rel="prev">
           <ChevronLeft className="h-4 w-4" />

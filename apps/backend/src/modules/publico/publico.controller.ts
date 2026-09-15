@@ -25,9 +25,14 @@ export async function getPeca(req: Request, res: Response) {
   res.json(await service.getPeca(Number(req.params.id)));
 }
 
-export async function listArteirosRecentes(req: Request, res: Response) {
-  const items = await service.listArteirosRecentes(positiveInt(req.query.limit));
-  res.json({ items });
+// ?limit= continua aceito como sinônimo de pageSize (usado pela home para os arteiros recentes).
+export async function listArteiros(req: Request, res: Response) {
+  const result = await service.listArteiros({
+    ordem: req.query.ordem === 'nome' ? 'nome' : 'recentes',
+    page: positiveInt(req.query.page),
+    pageSize: positiveInt(req.query.pageSize) ?? positiveInt(req.query.limit),
+  });
+  res.json(result);
 }
 
 export async function getArteiro(req: Request, res: Response) {

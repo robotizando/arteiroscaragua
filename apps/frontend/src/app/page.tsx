@@ -1,19 +1,19 @@
 import Link from 'next/link';
+import { ArrowRight } from 'lucide-react';
 import type {
   ListPublicoPecasResult,
   PublicoArteiroResumo,
   PublicoFiltros,
 } from '@arteiroscaragua/shared-types';
 import { apiGet } from '@/lib/api';
-import { primeiroParam } from '@/lib/utils';
+import { cn, primeiroParam } from '@/lib/utils';
 import { PecasGrid } from '@/components/pecas/peca-card';
 import { PecasFiltros } from '@/components/pecas/pecas-filtros';
 import { Paginacao } from '@/components/pecas/paginacao';
 import { ArteiroCard } from '@/components/arteiros/arteiro-card';
-import { buttonClassName } from '@/components/ui/button';
 
 const PECAS_POR_PAGINA = 24;
-const ARTEIROS_RECENTES = 6;
+const ARTEIROS_RECENTES = 3;
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 
@@ -42,16 +42,7 @@ export default async function HomePage({ searchParams }: { searchParams: SearchP
 
   return (
     <>
-      <section id="pecas" className="container pb-4 pt-6 sm:pt-10">
-        <div className="mb-5 max-w-2xl sm:mb-6">
-          <h1 className="font-display text-3xl font-medium leading-tight tracking-tight sm:text-4xl">
-            Feito à mão em Caraguatatuba
-          </h1>
-          <p className="mt-2 text-muted-foreground">
-            Peças de artesãs e artesãos do litoral norte. Escolha uma para conhecer a peça e quem a criou.
-          </p>
-        </div>
-
+      <section id="pecas" className="container">
         <PecasFiltros
           materiais={filtros.materiais}
           arteiros={filtros.arteiros}
@@ -59,53 +50,61 @@ export default async function HomePage({ searchParams }: { searchParams: SearchP
           materialId={materialId}
           arteiroId={arteiroId}
           total={pecas.total}
-        />
-
-        <div className="mt-6">
+        >
           {pecas.items.length ? (
-            <PecasGrid pecas={pecas.items} />
+            <PecasGrid pecas={pecas.items} colunas={3} />
           ) : (
-            <div className="rounded-2xl border border-dashed px-6 py-16 text-center">
-              <p className="font-display text-xl">
-                {temFiltro ? 'Nenhuma peça encontrada' : 'Ainda não há peças na vitrine'}
+            <div className="border-2 border-dashed border-foreground/30 px-6 py-14">
+              <p className="text-lg font-semibold">
+                {temFiltro
+                  ? 'Nenhuma peça encontrada. Tente outra palavra ou remova um filtro.'
+                  : 'Ainda não há peças na vitrine.'}
               </p>
-              {temFiltro && (
-                <>
-                  <p className="mt-2 text-sm text-muted-foreground">Tente outra palavra ou remova algum filtro.</p>
-                  <Link href="/" scroll={false} className={buttonClassName({ variant: 'outline', className: 'mt-5' })}>
-                    Limpar filtros
-                  </Link>
-                </>
-              )}
             </div>
           )}
-        </div>
-
-        <Paginacao page={pecas.page} pageSize={pecas.pageSize} total={pecas.total} params={filtrosAtuais} />
+          <Paginacao page={pecas.page} pageSize={pecas.pageSize} total={pecas.total} params={filtrosAtuais} />
+        </PecasFiltros>
       </section>
 
       {recentes.items.length > 0 && (
-        <section id="arteiros" className="mt-12 border-t bg-muted/40">
-          <div className="container py-12 sm:py-16">
-            <div className="mb-6 flex flex-wrap items-end justify-between gap-2">
+        // -mb-16 encosta a faixa no rodapé (que tem mt-16 nas demais páginas).
+        <section id="arteiros" className="-mb-16 mt-8 bg-mata-700 text-background lg:mt-14">
+          <div className="container pb-8 pt-7 lg:pb-14 lg:pt-12">
+            <div className="flex flex-wrap items-end justify-between gap-4">
               <div>
-                <h2 className="font-display text-2xl font-medium sm:text-3xl">Chegaram à vitrine</h2>
-                <p className="mt-1 text-muted-foreground">Os arteiros cadastrados mais recentemente.</p>
+                <p className="text-xs font-extrabold uppercase tracking-caps text-mata-300">Novos arteiros</p>
+                <h2 className="mt-1 text-[26px] font-extrabold leading-[1.05] tracking-tight lg:mt-1.5 lg:text-[40px]">
+                  Chegaram à vitrine
+                </h2>
               </div>
-              <Link href="/cadastro" className="text-sm font-medium text-primary underline-offset-4 hover:underline">
-                Você também é arteiro? Cadastre-se
-              </Link>
+              <LinkCadastro className="hidden sm:inline-flex" />
             </div>
-            <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <ul className="mt-4 grid gap-2 sm:mt-7 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
               {recentes.items.map((arteiro) => (
                 <li key={arteiro.id}>
                   <ArteiroCard arteiro={arteiro} />
                 </li>
               ))}
             </ul>
+            <LinkCadastro className="mt-4 sm:hidden" />
           </div>
         </section>
       )}
     </>
+  );
+}
+
+function LinkCadastro({ className }: { className?: string }) {
+  return (
+    <Link
+      href="/cadastro"
+      className={cn(
+        'inline-flex items-center gap-1 border-b-2 border-mata-300 pb-0.5 text-[14px] font-extrabold transition-colors duration-150 hover:text-mata-300',
+        className,
+      )}
+    >
+      Você também é arteiro? Cadastre-se
+      <ArrowRight className="h-4 w-4" aria-hidden />
+    </Link>
   );
 }

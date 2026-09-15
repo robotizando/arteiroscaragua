@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;800&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#E4E0D6;font-family:"Archivo",system-ui,sans-serif;color:#1B2A2F;-webkit-font-smoothing:antialiased}
+a{color:#1E7A43}a:hover{color:#155C33}
+input,select,button{font-family:inherit}
+select{appearance:none;-webkit-appearance:none}
+input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid #1E7A43;outline-offset:2px}
+</style>
+</helmet>
+
+<section data-screen-label="Turno 1" style="padding:40px 48px 80px;display:flex;flex-direction:column;gap:56px;width:max-content;min-width:100%;box-sizing:border-box">
+  <div style="display:flex;flex-direction:column;gap:6px;max-width:720px">
+    <div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:600;color:#5C6B6E">Turno 1 · duas direções</div>
+    <div style="font-size:15px;line-height:1.5;color:#3B474B">Mesma paleta (Mata Atlântica, mar, coral, areia) e mesma estrutura Modernist. <a href="#1a">1a</a> usa cabeçalho escuro e grade com linhas visíveis; <a href="#1b">1b</a> usa cabeçalho claro com busca embutida e filtros na lateral. Os filtros funcionam nos dois.</div>
+  </div>
+
+  <!-- ═══════════ 1a ═══════════ -->
+  <div id="1a" data-screen-label="1a Grade" style="display:flex;flex-direction:column;gap:16px">
+    <div style="display:flex;align-items:center;gap:12px">
+      <span style="display:inline-block;background:#1B2A2F;color:#F6F3EC;font-weight:800;font-size:13px;padding:4px 8px">1a</span>
+      <span style="font-size:15px;font-weight:600">Grade — cabeçalho escuro, filtros em barra, grade com réguas</span>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:32px;align-items:flex-start">
+
+      <!-- 1a desktop -->
+      <div data-screen-label="1a desktop" style="width:1280px;min-width:1280px;flex-shrink:0;background:#F6F3EC;box-shadow:0 12px 32px rgba(27,42,47,.22);display:flex;flex-direction:column">
+        <header style="height:56px;background:#1B2A2F;color:#F6F3EC;display:flex;align-items:center;gap:32px;padding:0 32px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:26px;height:26px;background:#2AAA4C"></div>
+            <div style="font-weight:800;font-size:17px;letter-spacing:-.02em">Arteiros Caraguá</div>
+          </div>
+          <nav style="display:flex;gap:20px;font-size:14px;color:#B9B3A6">
+            <a href="#1a" style="color:#F6F3EC;text-decoration:none">Peças</a>
+            <a href="#1a" style="color:#B9B3A6;text-decoration:none">Arteiros</a>
+            <a href="#1a" style="color:#B9B3A6;text-decoration:none">Quem somos</a>
+          </nav>
+          <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
+            <button style="height:36px;padding:0 12px;background:transparent;border:0;color:#F6F3EC;font-size:14px;font-weight:600;cursor:pointer">Entrar</button>
+            <button style="height:36px;padding:0 14px;background:#2AAA4C;border:0;color:#0A2C19;font-size:14px;font-weight:800;cursor:pointer" style-hover="background:#6CC08A">Tornar-se arteiro</button>
+          </div>
+        </header>
+
+        <div style="padding:40px 32px 0;display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:32px;align-items:end">
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <h1 style="margin:0;font-size:48px;line-height:1.02;letter-spacing:-.02em;font-weight:800;max-width:720px">Feito à mão em Caraguatatuba</h1>
+            <p style="margin:0;font-size:17px;line-height:1.5;color:#5C6B6E;max-width:560px">Peças de artesãs e artesãos do litoral norte. Escolha uma para conhecer a peça e quem a criou.</p>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;border-top:2px solid rgba(27,42,47,.4)">
+            <div style="padding:12px 0 0"><div style="font-size:28px;font-weight:800;letter-spacing:-.02em">128</div><div style="font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:#5C6B6E">peças</div></div>
+            <div style="padding:12px 0 0 16px;border-left:1px solid rgba(27,42,47,.18)"><div style="font-size:28px;font-weight:800;letter-spacing:-.02em">24</div><div style="font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:#5C6B6E">arteiros</div></div>
+          </div>
+        </div>
+
+        <div style="margin:32px 32px 0;height:2px;background:rgba(27,42,47,.4)"></div>
+
+        <div role="search" style="padding:16px 32px;display:grid;grid-template-columns:minmax(0,1fr) 220px 220px auto;gap:12px;align-items:center">
+          <label style="position:relative;display:block">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5C6B6E" stroke-width="2.2" style="position:absolute;left:12px;top:50%;transform:translateY(-50%)"><circle cx="11" cy="11" r="7"></circle><line x1="16.5" y1="16.5" x2="21" y2="21"></line></svg>
+            <input type="search" value="{{ q }}" onChange="{{ onQ }}" placeholder="Buscar por peça, arteiro ou descrição" style="width:100%;height:44px;box-sizing:border-box;padding:0 12px 0 36px;border:2px solid #1B2A2F;background:#FFFFFF;font-size:14px;color:#1B2A2F">
+          </label>
+          <select aria-label="Material" value="{{ material }}" onChange="{{ onMaterial }}" style="height:44px;padding:0 12px;border:2px solid #1B2A2F;background:#FFFFFF;font-size:14px;color:#1B2A2F;font-weight:600;cursor:pointer">
+            <option value="">Todos os materiais</option>
+            <sc-for list="{{ materiais }}" as="m" hint-placeholder-count="3"><option value="{{ m }}">{{ m }}</option></sc-for>
+          </select>
+          <select aria-label="Arteiro" value="{{ arteiro }}" onChange="{{ onArteiro }}" style="height:44px;padding:0 12px;border:2px solid #1B2A2F;background:#FFFFFF;font-size:14px;color:#1B2A2F;font-weight:600;cursor:pointer">
+            <option value="">Todos os arteiros</option>
+            <sc-for list="{{ todosArteiros }}" as="a" hint-placeholder-count="3"><option value="{{ a.nome }}">{{ a.nome }}</option></sc-for>
+          </select>
+          <button onClick="{{ limpar }}" style="height:44px;padding:0 14px;background:transparent;border:2px solid transparent;color:#1E7A43;font-weight:800;font-size:14px;cursor:pointer" style-hover="background:rgba(30,122,67,.1)">Limpar</button>
+        </div>
+        <div style="padding:0 32px 12px;font-size:13px;color:#5C6B6E" aria-live="polite">{{ totalLabel }}</div>
+
+        <div style="margin:0 32px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:rgba(27,42,47,.18);border:1px solid rgba(27,42,47,.18)">
+          <sc-for list="{{ pecas }}" as="p" hint-placeholder-count="8">
+            <a href="#1a" style="display:flex;flex-direction:column;background:#F6F3EC;padding:16px;text-decoration:none;color:#1B2A2F" style-hover="background:#FFFFFF">
+              <div style="aspect-ratio:4/5;background:repeating-linear-gradient(135deg,#EAE5DA 0 10px,#F1EDE3 10px 20px);position:relative;overflow:hidden">
+                <span style="position:absolute;left:8px;bottom:8px;font-family:ui-monospace,Menlo,monospace;font-size:10px;color:#6F6D68;background:#F6F3EC;padding:2px 5px">foto · {{ p.nome }}</span>
+              </div>
+              <div style="margin-top:12px;font-size:16px;font-weight:600;line-height:1.3;letter-spacing:-.01em">{{ p.nome }}</div>
+              <div style="margin-top:2px;font-size:13px;color:#5C6B6E">por <span style="color:#1B2A2F">{{ p.arteiro }}</span></div>
+              <div style="margin-top:10px;display:flex;justify-content:space-between;align-items:baseline;gap:8px">
+                <span style="font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:#155C33;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ p.materialLabel }}</span>
+                <span style="font-size:15px;font-weight:800;font-variant-numeric:tabular-nums;flex-shrink:0">{{ p.valor }}</span>
+              </div>
+            </a>
+          </sc-for>
+        </div>
+        <sc-if value="{{ vazio }}" hint-placeholder-val="{{ false }}">
+          <div style="margin:0 32px;padding:56px 24px;border:2px dashed rgba(27,42,47,.3);font-size:18px;font-weight:600">Nenhuma peça encontrada. Tente outra palavra ou remova um filtro.</div>
+        </sc-if>
+
+        <div style="margin:48px 32px 0;height:2px;background:rgba(27,42,47,.4)"></div>
+
+        <div style="padding:32px 32px 48px;display:flex;flex-direction:column;gap:24px">
+          <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap">
+            <div>
+              <h2 style="margin:0;font-size:32px;font-weight:800;letter-spacing:-.02em;line-height:1.1">Chegaram à vitrine</h2>
+              <p style="margin:6px 0 0;font-size:15px;color:#5C6B6E">Os arteiros cadastrados mais recentemente.</p>
+            </div>
+            <a href="#1a" style="font-size:14px;font-weight:800;color:#1E7A43;text-decoration:none;border-bottom:2px solid #1E7A43;padding-bottom:2px">Você também é arteiro? Cadastre-se →</a>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:rgba(27,42,47,.18);border:1px solid rgba(27,42,47,.18)">
+            <sc-for list="{{ arteiros }}" as="a" hint-placeholder-count="3">
+              <a href="#1a" style="display:flex;gap:16px;padding:20px;background:#FFFFFF;text-decoration:none;color:#1B2A2F" style-hover="background:#EAF6EE">
+                <div style="width:56px;height:56px;flex-shrink:0;background:#B5DCA1;color:#0F4225;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px">{{ a.iniciais }}</div>
+                <div style="min-width:0;display:flex;flex-direction:column;gap:4px">
+                  <div style="font-size:18px;font-weight:600;letter-spacing:-.01em">{{ a.nome }}</div>
+                  <div style="font-size:13px;color:#5C6B6E">{{ a.meta }}</div>
+                  <p style="margin:6px 0 0;font-size:14px;line-height:1.5;color:#3B474B;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">{{ a.bio }}</p>
+                  <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:6px">
+                    <sc-for list="{{ a.materiais }}" as="m" hint-placeholder-count="2"><span style="font-size:11px;text-transform:uppercase;letter-spacing:.08em;font-weight:600;padding:3px 8px;border:1px solid rgba(27,42,47,.4);color:#3B474B">{{ m }}</span></sc-for>
+                  </div>
+                </div>
+              </a>
+            </sc-for>
+          </div>
+        </div>
+
+        <footer style="border-top:2px solid rgba(27,42,47,.4);margin:0 32px;padding:20px 0 28px;display:flex;justify-content:space-between;font-size:12px;color:#5C6B6E;gap:16px;flex-wrap:wrap">
+          <span>© 2026 Arteiros Caraguá</span>
+          <span style="display:flex;gap:16px"><a href="#1a" style="color:#5C6B6E;text-decoration:none">Política de privacidade</a><a href="#1a" style="color:#5C6B6E;text-decoration:none">Termos de uso</a></span>
+        </footer>
+      </div>
+
+      <!-- 1a mobile -->
+      <div data-screen-label="1a mobile" style="width:390px;min-width:390px;flex-shrink:0;background:#F6F3EC;box-shadow:0 12px 32px rgba(27,42,47,.22);display:flex;flex-direction:column">
+        <header style="height:52px;background:#1B2A2F;color:#F6F3EC;display:flex;align-items:center;gap:12px;padding:0 16px">
+          <div style="width:22px;height:22px;background:#2AAA4C"></div>
+          <div style="font-weight:800;font-size:16px;letter-spacing:-.02em">Arteiros Caraguá</div>
+          <div style="margin-left:auto;display:flex;gap:4px">
+            <button aria-label="Entrar" style="width:44px;height:44px;background:transparent;border:0;color:#F6F3EC;cursor:pointer;display:flex;align-items:center;justify-content:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c0-4 4-6 8-6s8 2 8 6"></path></svg></button>
+            <button aria-label="Menu" style="width:44px;height:44px;background:transparent;border:0;color:#F6F3EC;cursor:pointer;display:flex;align-items:center;justify-content:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="7" x2="21" y2="7"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="17" x2="21" y2="17"></line></svg></button>
+          </div>
+        </header>
+        <div style="padding:24px 16px 0;display:flex;flex-direction:column;gap:8px">
+          <h1 style="margin:0;font-size:32px;line-height:1.05;letter-spacing:-.02em;font-weight:800">Feito à mão em Caraguatatuba</h1>
+          <p style="margin:0;font-size:15px;line-height:1.5;color:#5C6B6E">Peças de artesãs e artesãos do litoral norte.</p>
+        </div>
+        <div style="margin:20px 16px 0;height:2px;background:rgba(27,42,47,.4)"></div>
+        <div style="padding:12px 16px;display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <label style="position:relative;display:block;grid-column:1/-1">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5C6B6E" stroke-width="2.2" style="position:absolute;left:12px;top:50%;transform:translateY(-50%)"><circle cx="11" cy="11" r="7"></circle><line x1="16.5" y1="16.5" x2="21" y2="21"></line></svg>
+            <input type="search" value="{{ q }}" onChange="{{ onQ }}" placeholder="Buscar peça, arteiro ou descrição" style="width:100%;height:44px;box-sizing:border-box;padding:0 12px 0 36px;border:2px solid #1B2A2F;background:#FFFFFF;font-size:14px;color:#1B2A2F">
+          </label>
+          <select aria-label="Material" value="{{ material }}" onChange="{{ onMaterial }}" style="height:44px;min-width:0;padding:0 10px;border:2px solid #1B2A2F;background:#FFFFFF;font-size:13px;color:#1B2A2F;font-weight:600">
+            <option value="">Material</option>
+            <sc-for list="{{ materiais }}" as="m" hint-placeholder-count="3"><option value="{{ m }}">{{ m }}</option></sc-for>
+          </select>
+          <select aria-label="Arteiro" value="{{ arteiro }}" onChange="{{ onArteiro }}" style="height:44px;min-width:0;padding:0 10px;border:2px solid #1B2A2F;background:#FFFFFF;font-size:13px;color:#1B2A2F;font-weight:600">
+            <option value="">Arteiro</option>
+            <sc-for list="{{ todosArteiros }}" as="a" hint-placeholder-count="3"><option value="{{ a.nome }}">{{ a.nome }}</option></sc-for>
+          </select>
+        </div>
+        <div style="padding:0 16px 10px;font-size:12px;color:#5C6B6E;display:flex;justify-content:space-between"><span>{{ totalLabel }}</span><button onClick="{{ limpar }}" style="background:none;border:0;padding:0;color:#1E7A43;font-weight:800;font-size:12px;cursor:pointer">Limpar</button></div>
+        <div style="margin:0 16px;display:grid;grid-template-columns:1fr 1fr;gap:1px;background:rgba(27,42,47,.18);border:1px solid rgba(27,42,47,.18)">
+          <sc-for list="{{ pecas }}" as="p" hint-placeholder-count="6">
+            <a href="#1a" style="display:flex;flex-direction:column;background:#F6F3EC;padding:10px;text-decoration:none;color:#1B2A2F">
+              <div style="aspect-ratio:4/5;background:repeating-linear-gradient(135deg,#EAE5DA 0 10px,#F1EDE3 10px 20px);position:relative"><span style="position:absolute;left:6px;bottom:6px;font-family:ui-monospace,Menlo,monospace;font-size:9px;color:#6F6D68;background:#F6F3EC;padding:1px 4px">foto</span></div>
+              <div style="margin-top:8px;font-size:14px;font-weight:600;line-height:1.3">{{ p.nome }}</div>
+              <div style="font-size:12px;color:#5C6B6E;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ p.arteiro }}</div>
+              <div style="margin-top:6px;display:flex;justify-content:space-between;gap:6px;align-items:baseline"><span style="font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:#155C33;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ p.materialLabel }}</span><span style="font-size:14px;font-weight:800;flex-shrink:0">{{ p.valor }}</span></div>
+            </a>
+          </sc-for>
+        </div>
+        <div style="margin:32px 16px 0;height:2px;background:rgba(27,42,47,.4)"></div>
+        <div style="padding:20px 16px 32px;display:flex;flex-direction:column;gap:16px">
+          <h2 style="margin:0;font-size:24px;font-weight:800;letter-spacing:-.02em">Chegaram à vitrine</h2>
+          <div style="display:flex;flex-direction:column;gap:1px;background:rgba(27,42,47,.18);border:1px solid rgba(27,42,47,.18)">
+            <sc-for list="{{ arteiros }}" as="a" hint-placeholder-count="3">
+              <a href="#1a" style="display:flex;gap:12px;padding:14px;background:#FFFFFF;text-decoration:none;color:#1B2A2F">
+                <div style="width:48px;height:48px;flex-shrink:0;background:#B5DCA1;color:#0F4225;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px">{{ a.iniciais }}</div>
+                <div style="min-width:0"><div style="font-size:16px;font-weight:600">{{ a.nome }}</div><div style="font-size:12px;color:#5C6B6E">{{ a.meta }}</div><p style="margin:4px 0 0;font-size:13px;line-height:1.45;color:#3B474B;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">{{ a.bio }}</p></div>
+              </a>
+            </sc-for>
+          </div>
+          <a href="#1a" style="font-size:14px;font-weight:800;color:#1E7A43;text-decoration:none;align-self:flex-start;border-bottom:2px solid #1E7A43">Você também é arteiro? Cadastre-se →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ 1b ═══════════ -->
+  <div id="1b" data-screen-label="1b Vitrine" style="display:flex;flex-direction:column;gap:16px">
+    <div style="display:flex;align-items:center;gap:12px">
+      <span style="display:inline-block;background:#1B2A2F;color:#F6F3EC;font-weight:800;font-size:13px;padding:4px 8px">1b</span>
+      <span style="font-size:15px;font-weight:600">Vitrine — cabeçalho claro com busca, filtros na lateral, arteiros em campo verde</span>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:32px;align-items:flex-start">
+
+      <!-- 1b desktop -->
+      <div data-screen-label="1b desktop" style="width:1280px;min-width:1280px;flex-shrink:0;background:#F6F3EC;box-shadow:0 12px 32px rgba(27,42,47,.22);display:flex;flex-direction:column">
+        <header style="height:56px;background:#155C33;color:#F6F3EC;display:flex;align-items:center;gap:24px;padding:0 32px">
+          <div style="display:flex;align-items:center;gap:10px;flex-shrink:0">
+            <div style="width:26px;height:26px;background:#B5DCA1"></div>
+            <div style="font-weight:800;font-size:17px;letter-spacing:-.02em">Arteiros Caraguá</div>
+          </div>
+          <label style="position:relative;display:block;flex:1;max-width:520px;margin-left:24px">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#B5DCA1" stroke-width="2.2" style="position:absolute;left:12px;top:50%;transform:translateY(-50%)"><circle cx="11" cy="11" r="7"></circle><line x1="16.5" y1="16.5" x2="21" y2="21"></line></svg>
+            <input type="search" value="{{ q }}" onChange="{{ onQ }}" placeholder="Buscar por peça, arteiro ou descrição" style="width:100%;height:36px;box-sizing:border-box;padding:0 12px 0 36px;border:0;border-bottom:2px solid #B5DCA1;background:transparent;font-size:14px;color:#F6F3EC">
+          </label>
+          <nav style="margin-left:auto;display:flex;gap:20px;font-size:14px;align-items:center">
+            <a href="#1b" style="color:#F6F3EC;text-decoration:none;font-weight:600">Peças</a>
+            <a href="#1b" style="color:#B5DCA1;text-decoration:none">Arteiros</a>
+            <a href="#1b" style="color:#B5DCA1;text-decoration:none">Entrar</a>
+            <button style="height:36px;padding:0 14px;background:#B5DCA1;border:0;color:#0F4225;font-size:14px;font-weight:800;cursor:pointer" style-hover="background:#CFEBD8">Tornar-se arteiro</button>
+          </nav>
+        </header>
+
+        <div style="padding:40px 32px 0;display:grid;grid-template-columns:260px minmax(0,1fr);gap:48px">
+          <aside style="display:flex;flex-direction:column;gap:32px">
+            <div style="display:flex;flex-direction:column;gap:4px">
+              <div style="font-size:11px;text-transform:uppercase;letter-spacing:.08em;font-weight:800;padding-bottom:8px;border-bottom:2px solid #1B2A2F;margin-bottom:6px">Material</div>
+              <button onClick="{{ limparMaterial }}" style="text-align:left;background:none;border:0;padding:8px 0;font-size:14px;cursor:pointer;color:#1B2A2F;display:flex;justify-content:space-between;border-bottom:1px solid rgba(27,42,47,.18)" style-hover="color:#1E7A43"><span style="font-weight:{{ pesoTodosMat }}">Todos</span></button>
+              <sc-for list="{{ materiaisOpt }}" as="m" hint-placeholder-count="6">
+                <button onClick="{{ m.select }}" style="text-align:left;background:none;border:0;padding:8px 0;font-size:14px;cursor:pointer;color:#1B2A2F;display:flex;justify-content:space-between;border-bottom:1px solid rgba(27,42,47,.18)" style-hover="color:#1E7A43"><span style="font-weight:{{ m.peso }}">{{ m.nome }}</span><span style="color:#5C6B6E;font-variant-numeric:tabular-nums">{{ m.count }}</span></button>
+              </sc-for>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:4px">
+              <div style="font-size:11px;text-transform:uppercase;letter-spacing:.08em;font-weight:800;padding-bottom:8px;border-bottom:2px solid #1B2A2F;margin-bottom:6px">Arteiro</div>
+              <button onClick="{{ limparArteiro }}" style="text-align:left;background:none;border:0;padding:8px 0;font-size:14px;cursor:pointer;color:#1B2A2F;display:flex;justify-content:space-between;border-bottom:1px solid rgba(27,42,47,.18)" style-hover="color:#1E7A43"><span style="font-weight:{{ pesoTodosArt }}">Todos</span></button>
+              <sc-for list="{{ topArteiros }}" as="a" hint-placeholder-count="5">
+                <button onClick="{{ a.select }}" style="text-align:left;background:none;border:0;padding:8px 0;font-size:14px;cursor:pointer;color:#1B2A2F;display:flex;justify-content:space-between;gap:8px;border-bottom:1px solid rgba(27,42,47,.18)" style-hover="color:#1E7A43"><span style="font-weight:{{ a.peso }};min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ a.nome }}</span><span style="color:#5C6B6E;font-variant-numeric:tabular-nums;flex-shrink:0">{{ a.pecas }}</span></button>
+              </sc-for>
+              <select aria-label="Outros arteiros" value="{{ arteiro }}" onChange="{{ onArteiro }}" style="margin-top:8px;height:40px;padding:0 10px;border:2px solid #1B2A2F;background:#FFFFFF;font-size:13px;color:#1B2A2F;font-weight:600;cursor:pointer">
+                <option value="">Outros arteiros…</option>
+                <sc-for list="{{ todosArteiros }}" as="a" hint-placeholder-count="3"><option value="{{ a.nome }}">{{ a.nome }}</option></sc-for>
+              </select>
+            </div>
+            <button onClick="{{ limpar }}" style="align-self:flex-start;background:none;border:0;padding:0;color:#1E7A43;font-weight:800;font-size:13px;cursor:pointer;border-bottom:2px solid #1E7A43">Limpar filtros</button>
+          </aside>
+
+          <div style="display:flex;flex-direction:column;gap:24px;min-width:0">
+            <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:24px;border-bottom:2px solid #1B2A2F;padding-bottom:16px">
+              <h1 style="margin:0;font-size:40px;line-height:1.02;letter-spacing:-.02em;font-weight:800;max-width:620px">Feito à mão no litoral norte</h1>
+              <div style="font-size:13px;color:#5C6B6E;flex-shrink:0" aria-live="polite">{{ totalLabel }}</div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:32px 24px">
+              <sc-for list="{{ pecas }}" as="p" hint-placeholder-count="6">
+                <a href="#1b" style="display:flex;flex-direction:column;text-decoration:none;color:#1B2A2F">
+                  <div style="aspect-ratio:4/5;background:repeating-linear-gradient(135deg,#EAE5DA 0 10px,#F1EDE3 10px 20px);position:relative;border:1px solid rgba(27,42,47,.18)">
+                    <span style="position:absolute;left:8px;bottom:8px;font-family:ui-monospace,Menlo,monospace;font-size:10px;color:#6F6D68;background:#F6F3EC;padding:2px 5px">foto · {{ p.nome }}</span>
+                  </div>
+                  <div style="margin-top:12px;display:flex;justify-content:space-between;gap:12px;align-items:baseline">
+                    <span style="font-size:17px;font-weight:600;line-height:1.3;letter-spacing:-.01em">{{ p.nome }}</span>
+                    <span style="font-size:15px;font-weight:800;font-variant-numeric:tabular-nums;flex-shrink:0">{{ p.valor }}</span>
+                  </div>
+                  <div style="margin-top:4px;font-size:13px;color:#5C6B6E">{{ p.arteiro }} · <span style="color:#155C33;text-transform:uppercase;letter-spacing:.06em;font-size:11px;font-weight:600">{{ p.materialLabel }}</span></div>
+                </a>
+              </sc-for>
+            </div>
+            <sc-if value="{{ vazio }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:56px 24px;border:2px dashed rgba(27,42,47,.3);font-size:18px;font-weight:600">Nenhuma peça encontrada. Tente outra palavra ou remova um filtro.</div>
+            </sc-if>
+          </div>
+        </div>
+
+        <div style="margin-top:56px;background:#155C33;color:#F6F3EC;padding:48px 32px 56px;display:flex;flex-direction:column;gap:28px">
+          <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap">
+            <div>
+              <div style="font-size:11px;text-transform:uppercase;letter-spacing:.08em;font-weight:800;color:#B5DCA1">Novos arteiros</div>
+              <h2 style="margin:6px 0 0;font-size:40px;font-weight:800;letter-spacing:-.02em;line-height:1.05">Chegaram à vitrine</h2>
+            </div>
+            <a href="#1b" style="font-size:14px;font-weight:800;color:#F6F3EC;text-decoration:none;border-bottom:2px solid #B5DCA1;padding-bottom:2px">Você também é arteiro? Cadastre-se →</a>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px">
+            <sc-for list="{{ arteiros }}" as="a" hint-placeholder-count="3">
+              <a href="#1b" style="display:flex;flex-direction:column;gap:12px;padding:24px;background:#F6F3EC;color:#1B2A2F;text-decoration:none" style-hover="background:#FFFFFF">
+                <div style="display:flex;gap:14px;align-items:center">
+                  <div style="width:56px;height:56px;flex-shrink:0;background:#1B2A2F;color:#B5DCA1;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px">{{ a.iniciais }}</div>
+                  <div style="min-width:0"><div style="font-size:19px;font-weight:600;letter-spacing:-.01em">{{ a.nome }}</div><div style="font-size:13px;color:#5C6B6E">{{ a.meta }}</div></div>
+                </div>
+                <p style="margin:0;font-size:14px;line-height:1.5;color:#3B474B;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden">{{ a.bio }}</p>
+                <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:auto">
+                  <sc-for list="{{ a.materiais }}" as="m" hint-placeholder-count="2"><span style="font-size:11px;text-transform:uppercase;letter-spacing:.08em;font-weight:600;padding:3px 8px;background:#B5DCA1;color:#0F4225">{{ m }}</span></sc-for>
+                </div>
+              </a>
+            </sc-for>
+          </div>
+        </div>
+
+        <footer style="padding:20px 32px 28px;display:flex;justify-content:space-between;font-size:12px;color:#5C6B6E;gap:16px;flex-wrap:wrap">
+          <span>© 2026 Arteiros Caraguá</span>
+          <span style="display:flex;gap:16px"><a href="#1b" style="color:#5C6B6E;text-decoration:none">Política de privacidade</a><a href="#1b" style="color:#5C6B6E;text-decoration:none">Termos de uso</a></span>
+        </footer>
+      </div>
+
+      <!-- 1b mobile -->
+      <div data-screen-label="1b mobile" style="width:390px;min-width:390px;flex-shrink:0;background:#F6F3EC;box-shadow:0 12px 32px rgba(27,42,47,.22);display:flex;flex-direction:column">
+        <header style="height:52px;border-bottom:2px solid #1B2A2F;display:flex;align-items:center;gap:10px;padding:0 16px">
+          <div style="width:22px;height:22px;background:#1E7A43"></div>
+          <div style="font-weight:800;font-size:16px;letter-spacing:-.02em">Arteiros Caraguá</div>
+          <div style="margin-left:auto;display:flex;gap:4px">
+            <button aria-label="Entrar" style="width:44px;height:44px;background:transparent;border:0;color:#1B2A2F;cursor:pointer;display:flex;align-items:center;justify-content:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c0-4 4-6 8-6s8 2 8 6"></path></svg></button>
+            <button aria-label="Menu" style="width:44px;height:44px;background:transparent;border:0;color:#1B2A2F;cursor:pointer;display:flex;align-items:center;justify-content:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="7" x2="21" y2="7"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="17" x2="21" y2="17"></line></svg></button>
+          </div>
+        </header>
+        <div style="padding:12px 16px 0">
+          <label style="position:relative;display:block">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5C6B6E" stroke-width="2.2" style="position:absolute;left:12px;top:50%;transform:translateY(-50%)"><circle cx="11" cy="11" r="7"></circle><line x1="16.5" y1="16.5" x2="21" y2="21"></line></svg>
+            <input type="search" value="{{ q }}" onChange="{{ onQ }}" placeholder="Buscar peça, arteiro ou descrição" style="width:100%;height:44px;box-sizing:border-box;padding:0 12px 0 36px;border:0;border-bottom:2px solid rgba(27,42,47,.4);background:transparent;font-size:14px;color:#1B2A2F">
+          </label>
+        </div>
+        <div style="display:flex;gap:6px;overflow-x:auto;padding:14px 16px 4px;scrollbar-width:none">
+          <button onClick="{{ limparMaterial }}" style="flex-shrink:0;height:34px;padding:0 12px;border:2px solid #1B2A2F;background:{{ bgTodosMat }};color:{{ fgTodosMat }};font-size:13px;font-weight:600;cursor:pointer">Todos</button>
+          <sc-for list="{{ materiaisOpt }}" as="m" hint-placeholder-count="5">
+            <button onClick="{{ m.select }}" style="flex-shrink:0;height:34px;padding:0 12px;border:2px solid #1B2A2F;background:{{ m.bg }};color:{{ m.fg }};font-size:13px;font-weight:600;cursor:pointer">{{ m.nome }}</button>
+          </sc-for>
+        </div>
+        <div style="padding:10px 16px 0;display:flex;gap:8px;align-items:center">
+          <select aria-label="Arteiro" value="{{ arteiro }}" onChange="{{ onArteiro }}" style="flex:1;min-width:0;height:40px;padding:0 10px;border:2px solid #1B2A2F;background:#FFFFFF;font-size:13px;color:#1B2A2F;font-weight:600">
+            <option value="">Todos os arteiros</option>
+            <sc-for list="{{ todosArteiros }}" as="a" hint-placeholder-count="3"><option value="{{ a.nome }}">{{ a.nome }}</option></sc-for>
+          </select>
+          <span style="font-size:12px;color:#5C6B6E;flex-shrink:0">{{ totalLabel }}</span>
+        </div>
+        <div style="margin:16px 16px 0;height:2px;background:#1B2A2F"></div>
+        <div style="padding:16px 16px 0;display:grid;grid-template-columns:1fr 1fr;gap:20px 12px">
+          <sc-for list="{{ pecas }}" as="p" hint-placeholder-count="6">
+            <a href="#1b" style="display:flex;flex-direction:column;text-decoration:none;color:#1B2A2F">
+              <div style="aspect-ratio:4/5;background:repeating-linear-gradient(135deg,#EAE5DA 0 10px,#F1EDE3 10px 20px);position:relative;border:1px solid rgba(27,42,47,.18)"><span style="position:absolute;left:6px;bottom:6px;font-family:ui-monospace,Menlo,monospace;font-size:9px;color:#6F6D68;background:#F6F3EC;padding:1px 4px">foto</span></div>
+              <div style="margin-top:8px;display:flex;justify-content:space-between;gap:8px;align-items:baseline"><span style="font-size:14px;font-weight:600;line-height:1.3">{{ p.nome }}</span><span style="font-size:14px;font-weight:800;flex-shrink:0">{{ p.valor }}</span></div>
+              <div style="margin-top:2px;font-size:12px;color:#5C6B6E;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ p.arteiro }} · {{ p.materialLabel }}</div>
+            </a>
+          </sc-for>
+        </div>
+        <div style="margin-top:32px;background:#155C33;color:#F6F3EC;padding:28px 16px 32px;display:flex;flex-direction:column;gap:16px">
+          <div><div style="font-size:11px;text-transform:uppercase;letter-spacing:.08em;font-weight:800;color:#B5DCA1">Novos arteiros</div><h2 style="margin:4px 0 0;font-size:26px;font-weight:800;letter-spacing:-.02em">Chegaram à vitrine</h2></div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <sc-for list="{{ arteiros }}" as="a" hint-placeholder-count="3">
+              <a href="#1b" style="display:flex;gap:12px;padding:14px;background:#F6F3EC;color:#1B2A2F;text-decoration:none">
+                <div style="width:48px;height:48px;flex-shrink:0;background:#1B2A2F;color:#B5DCA1;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px">{{ a.iniciais }}</div>
+                <div style="min-width:0"><div style="font-size:16px;font-weight:600">{{ a.nome }}</div><div style="font-size:12px;color:#5C6B6E">{{ a.meta }}</div><p style="margin:4px 0 0;font-size:13px;line-height:1.45;color:#3B474B;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">{{ a.bio }}</p></div>
+              </a>
+            </sc-for>
+          </div>
+          <a href="#1b" style="font-size:14px;font-weight:800;color:#F6F3EC;text-decoration:none;align-self:flex-start;border-bottom:2px solid #B5DCA1">Você também é arteiro? Cadastre-se →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const PECAS = [
+  { nome: 'Colar de sementes de açaí', arteiro: 'Marisa Tupã', materiais: ['Botânica'], valor: 45, desc: 'sementes colhidas na mata, fio de algodão' },
+  { nome: 'Vaso raku Maré Baixa', arteiro: 'Ateliê Barro do Mar', materiais: ['Cerâmica'], valor: 180, desc: 'queima raku, argila local' },
+  { nome: 'Caixa em caixeta', arteiro: 'Seu Zé da Madeira', materiais: ['Madeira'], valor: 120, desc: 'madeira de manejo, encaixe sem prego' },
+  { nome: 'Painel mosaico Costão', arteiro: 'Lúcia Mosaicos', materiais: ['Mosaico', 'Pedra'], valor: 260, desc: 'azulejo reaproveitado e seixos da praia' },
+  { nome: 'Brinco de conchas', arteiro: 'Marisa Tupã', materiais: ['Conchas'], valor: 38, desc: 'conchas recolhidas na Cocanha' },
+  { nome: 'Bolsa em fibra de bananeira', arteiro: 'Trama Caiçara', materiais: ['Fibras'], valor: 150, desc: 'fibra trançada à mão' },
+  { nome: 'Luminária de bambu', arteiro: 'Trama Caiçara', materiais: ['Botânica', 'Fibras'], valor: 210, desc: 'bambu tratado, cúpula em taboa' },
+  { nome: 'Pingente pedra-sabão Jundu', arteiro: 'Pedra & Sal', materiais: ['Pedra'], valor: 60, desc: 'pedra-sabão lapidada, cordão de couro' },
+];
+const ARTEIROS = [
+  { nome: 'Trama Caiçara', grupo: 'Coletivo · Massaguaçu', pecas: 14, materiais: ['Fibras', 'Botânica'], bio: 'Coletivo de trançadeiras que trabalha fibra de bananeira e taboa colhidas em manejo sustentável, mantendo técnicas caiçaras de cestaria.' },
+  { nome: 'Marisa Tupã', grupo: 'Artesã · Cocanha', pecas: 9, materiais: ['Botânica', 'Conchas'], bio: 'Biojoias com sementes, conchas e fios naturais. Cada peça vem com a história da planta ou da praia de origem.' },
+  { nome: 'Ateliê Barro do Mar', grupo: 'Ateliê · Centro', pecas: 22, materiais: ['Cerâmica'], bio: 'Cerâmica utilitária e decorativa em queima raku, com esmaltes inspirados nos tons da Mata Atlântica e do mar.' },
+  { nome: 'Lúcia Mosaicos', grupo: 'Artesã · Martim de Sá', pecas: 6, materiais: ['Mosaico', 'Pedra'], bio: 'Mosaicos com azulejo reaproveitado e seixos.' },
+  { nome: 'Seu Zé da Madeira', grupo: 'Artesão · Porto Novo', pecas: 11, materiais: ['Madeira'], bio: 'Marchetaria e caixas em madeira de manejo.' },
+  { nome: 'Pedra & Sal', grupo: 'Ateliê · Indaiá', pecas: 7, materiais: ['Pedra', 'Couro'], bio: 'Lapidação de pedra-sabão e couro.' },
+];
+const brl = v => 'R$ ' + v.toFixed(2).replace('.', ',');
+const ini = n => n.replace(/[^A-Za-zÀ-ú ]/g, '').split(' ').filter(Boolean).slice(0, 2).map(w => w[0]).join('').toUpperCase();
+
+class Component extends DCLogic {
+  state = { q: '', material: '', arteiro: '' };
+  renderVals() {
+    const { q, material, arteiro } = this.state;
+    const ql = q.trim().toLowerCase();
+    const pecas = PECAS.filter(p =>
+      (!material || p.materiais.includes(material)) &&
+      (!arteiro || p.arteiro === arteiro) &&
+      (!ql || [p.nome, p.arteiro, p.desc].join(' ').toLowerCase().includes(ql))
+    ).map(p => ({ ...p, materialLabel: p.materiais.join(' · '), valor: brl(p.valor) }));
+    const materiais = [...new Set(PECAS.flatMap(p => p.materiais))].sort();
+    const materiaisOpt = materiais.map(m => {
+      const on = m === material;
+      return { nome: m, count: PECAS.filter(p => p.materiais.includes(m)).length, peso: on ? 800 : 400,
+        bg: on ? '#1B2A2F' : 'transparent', fg: on ? '#F6F3EC' : '#1B2A2F', select: () => this.setState({ material: on ? '' : m }) };
+    });
+    const n = pecas.length;
+    return {
+      q, material, arteiro, pecas, materiais, materiaisOpt,
+      vazio: n === 0,
+      totalLabel: n === 1 ? '1 peça encontrada' : `${n} peças encontradas`,
+      pesoTodosMat: material ? 400 : 800,
+      bgTodosMat: material ? 'transparent' : '#1B2A2F', fgTodosMat: material ? '#1B2A2F' : '#F6F3EC',
+      todosArteiros: ARTEIROS,
+      topArteiros: [...ARTEIROS].sort((a, b) => b.pecas - a.pecas).slice(0, 5).map(a => ({
+        nome: a.nome, pecas: a.pecas, peso: a.nome === arteiro ? 800 : 400,
+        select: () => this.setState({ arteiro: a.nome === arteiro ? '' : a.nome }) })),
+      pesoTodosArt: arteiro ? 400 : 800,
+      limparArteiro: () => this.setState({ arteiro: '' }),
+      arteiros: ARTEIROS.slice(0, 3).map(a => ({ ...a, iniciais: ini(a.nome), meta: `${a.grupo} · ${a.pecas} peças` })),
+      onQ: e => this.setState({ q: e.target.value }),
+      onMaterial: e => this.setState({ material: e.target.value }),
+      onArteiro: e => this.setState({ arteiro: e.target.value }),
+      limparMaterial: () => this.setState({ material: '' }),
+      limpar: () => this.setState({ q: '', material: '', arteiro: '' }),
+    };
+  }
+}
+</script>
+</body>
+</html>

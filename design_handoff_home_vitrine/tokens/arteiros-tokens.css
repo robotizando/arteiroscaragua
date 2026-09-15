@@ -1,0 +1,120 @@
+/* Arteiros Caraguá — tokens de design (v2)
+   Formato compatível com o globals.css atual do apps/frontend (hsl(var(--x)) no tailwind.config.ts).
+   Paleta: Mata Atlântica (verde), mar (azul-petróleo), coral e areia — extraída do logotipo.
+   Estrutura Modernist: raio 0, réguas fortes de 2px, tudo alinhado à esquerda, Archivo. */
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;800&display=swap');
+
+:root {
+  /* — papéis (shadcn/tailwind: hsl(var(--x))) — */
+  --background: 42 36% 95%;      /* #F6F3EC */
+  --foreground: 195 27% 15%;     /* #1B2A2F */
+  --card: 0 0% 100%;             /* #FFFFFF */
+  --card-foreground: 195 27% 15%; /* #1B2A2F */
+  --primary: 144 61% 30%;        /* #1E7A43 */
+  --primary-foreground: 42 36% 95%; /* #F6F3EC */
+  --secondary: 190 64% 34%;      /* #1F7A8C */
+  --secondary-foreground: 42 36% 95%; /* #F6F3EC */
+  --accent: 0 68% 63%;           /* #E0605F */
+  --accent-foreground: 195 27% 15%; /* #1B2A2F */
+  --muted: 41 28% 89%;           /* #EAE5DA */
+  --muted-foreground: 190 9% 40%; /* #5C6B6E */
+  --destructive: 3 59% 45%;      /* #B8362F */
+  --destructive-foreground: 0 0% 100%; /* #FFFFFF */
+  --success: 144 61% 30%;        /* #1E7A43 */
+  --success-foreground: 0 0% 100%; /* #FFFFFF */
+  --whatsapp: 142 70% 49%;       /* #25D366 */
+  --whatsapp-foreground: 141 48% 8%; /* #0B1F12 */
+  --border: 41 20% 81%;          /* #D9D3C6 */
+  --input: 41 17% 75%;           /* #C9C2B3 */
+  --ring: 144 61% 30%;           /* #1E7A43 */
+  --divider: 195 27% 15%;        /* #1B2A2F */
+  --header: 195 27% 15%;         /* #1B2A2F */
+  --header-foreground: 42 36% 95%; /* #F6F3EC */
+  --radius: 0px;
+
+  /* — rampas (hex, OKLCH-like em escala compartilhada; use com var() direto) — */
+  --mata-100: #EAF6EE;
+  --mata-200: #CFEBD8;
+  --mata-300: #B5DCA1;
+  --mata-400: #6CC08A;
+  --mata-500: #2AAA4C;
+  --mata-600: #1E7A43;
+  --mata-700: #155C33;
+  --mata-800: #0F4225;
+  --mata-900: #0A2C19;
+
+  --mar-100: #E8F6F8;
+  --mar-200: #C6EAEE;
+  --mar-300: #A6E3E9;
+  --mar-400: #5FC0CC;
+  --mar-500: #2E9FAF;
+  --mar-600: #1F7A8C;
+  --mar-700: #165A68;
+  --mar-800: #0F4049;
+  --mar-900: #0A2A31;
+
+  --coral-100: #FDEFEF;
+  --coral-200: #FDE3E4;
+  --coral-300: #FFC3C7;
+  --coral-400: #FF8C94;
+  --coral-500: #F0716F;
+  --coral-600: #E0605F;
+  --coral-700: #B8464A;
+  --coral-800: #8A3236;
+  --coral-900: #5A2225;
+
+  --areia-100: #FBF5EC;
+  --areia-200: #F9DDBD;
+  --areia-300: #EDCB9F;
+  --areia-400: #DDB587;
+  --areia-500: #C79A66;
+  --areia-600: #A97D4C;
+  --areia-700: #845F38;
+  --areia-800: #5F4427;
+  --areia-900: #3D2B18;
+
+  --neutro-100: #F6F3EC;
+  --neutro-200: #EAE5DA;
+  --neutro-300: #D9D3C6;
+  --neutro-400: #B9B3A6;
+  --neutro-500: #948F86;
+  --neutro-600: #6F6D68;
+  --neutro-700: #5C6B6E;
+  --neutro-800: #3B474B;
+  --neutro-900: #1B2A2F;
+
+  /* — tipografia — */
+  --font-display: "Archivo", system-ui, sans-serif;
+  --font-sans: "Archivo", system-ui, sans-serif;
+  --font-display-weight: 800;
+  --text-xs: 11px;  --text-sm: 13px;  --text-base: 15px;
+  --text-lg: 18px;  --text-xl: 22px;  --text-2xl: 28px;
+  --text-3xl: 36px; --text-4xl: 48px;
+  --leading-tight: 1.08; --leading-normal: 1.5;
+  --tracking-tight: -0.02em; --tracking-caps: 0.08em;
+
+  /* — espaçamento — */
+  --space-1: 4px;  --space-2: 8px;  --space-3: 12px; --space-4: 16px;
+  --space-5: 20px; --space-6: 24px; --space-8: 32px; --space-10: 40px;
+  --space-12: 48px; --space-16: 64px;
+
+  /* — estrutura — */
+  --header-height: 56px;
+  --container-max: 1320px;
+  --rule: 2px;                       /* régua forte entre seções */
+  --grid-line: 1px;                  /* linha fina da grade de peças */
+  --divider-color: hsl(var(--divider) / 0.4);
+  --grid-line-color: hsl(var(--divider) / 0.18);
+
+  /* — elevação — */
+  --shadow-sm: 0 1px 2px hsl(var(--divider) / 0.14);
+  --shadow-md: 0 3px 10px hsl(var(--divider) / 0.16);
+  --shadow-lg: 0 12px 32px hsl(var(--divider) / 0.22);
+
+  /* — imagem de peça — */
+  --peca-aspect: 4 / 5;
+}
+
+/* — estados globais — */
+:focus-visible { outline: 2px solid hsl(var(--ring)); outline-offset: 2px; }
+::selection { background: var(--mata-200); }

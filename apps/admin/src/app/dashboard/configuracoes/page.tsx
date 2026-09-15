@@ -14,6 +14,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { RichTextEditor } from '@/components/configuracoes-site/rich-text-editor';
 import { ImagemCampoCard, useImagemCampo } from '@/components/configuracoes-site/imagem-campo';
+import {
+  DestaqueCampoCard,
+  destaqueAlterado,
+  destaqueDe,
+  type DestaqueForm,
+} from '@/components/configuracoes-site/destaque-campo';
 import { useConfiguracaoSite, useUpdateConfiguracaoSite } from '@/lib/configuracoes-site-api';
 import { getApiErrorMessage } from '@/lib/api';
 
@@ -44,6 +50,7 @@ export default function ConfiguracoesSitePage() {
   const updateMutation = useUpdateConfiguracaoSite();
 
   const [textos, setTextos] = useState(TEXTOS_VAZIOS);
+  const [destaque, setDestaque] = useState<DestaqueForm>({ texto: '', ativo: false, cor: '', altura: '' });
   const logotipo = useImagemCampo({
     maxBytes: CONFIGURACAO_SITE_LOGOTIPO_MAX_BYTES,
     mimeTypes: CONFIGURACAO_SITE_LOGOTIPO_MIME_TYPES,
@@ -57,6 +64,7 @@ export default function ConfiguracoesSitePage() {
 
   function resetFrom(configuracao: ConfiguracaoSite) {
     setTextos(textosDe(configuracao));
+    setDestaque(destaqueDe(configuracao));
     logotipo.reset(configuracao.logotipoUrl);
     capa.reset(configuracao.capaUrl);
   }
@@ -69,11 +77,14 @@ export default function ConfiguracoesSitePage() {
   const textosAlterados = data
     ? TEXTOS.filter(({ campo }) => textos[campo] !== data[campo]).map(({ campo }) => campo)
     : [];
-  const isDirty = textosAlterados.length > 0 || logotipo.isDirty || capa.isDirty;
+  const destaqueCampos = data ? destaqueAlterado(destaque, data) : {};
+  const isDirty =
+    textosAlterados.length > 0 || Object.keys(destaqueCampos).length > 0 || logotipo.isDirty || capa.isDirty;
 
   async function handleSave() {
     const formData = new FormData();
     for (const campo of textosAlterados) formData.append(campo, textos[campo]);
+    for (const [campo, valor] of Object.entries(destaqueCampos)) formData.append(campo, valor);
     if (logotipo.file) formData.append('logotipo', logotipo.file);
     if (logotipo.remove) formData.append('removeLogotipo', 'true');
     if (capa.file) formData.append('capa', capa.file);
@@ -92,7 +103,7 @@ export default function ConfiguracoesSitePage() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">Configurações do site</h1>
-          <p className="text-muted-foreground">Logotipo, imagem de capa e textos institucionais exibidos no site.</p>
+          <p className="text-muted-foreground">Logotipo, barra de destaque, imagem de capa e textos institucionais exibidos no site.</p>
         </div>
         <div className="flex gap-2">
           <Button
@@ -116,6 +127,8 @@ export default function ConfiguracoesSitePage() {
         previewClassName="h-28 max-w-sm bg-[repeating-conic-gradient(hsl(var(--muted))_0_25%,hsl(var(--background))_0_50%)] bg-[length:16px_16px]"
         imageClassName="object-contain p-3"
       />
+
+      <DestaqueCampoCard form={destaque} onChange={setDestaque} isLoading={isLoading} />
 
       <ImagemCampoCard
         campo={capa}

@@ -61,6 +61,11 @@ export async function updateConfiguracaoSite(
       ? { politicaPrivacidade: sanitize(input.politicaPrivacidade) }
       : {}),
     ...(input.quemSomos !== undefined ? { quemSomos: sanitize(input.quemSomos) } : {}),
+    // Texto simples: o site o exibe como texto (escapado pelo React), sem HTML.
+    ...(input.destaqueTexto !== undefined ? { destaqueTexto: input.destaqueTexto } : {}),
+    ...(input.destaqueAtivo !== undefined ? { destaqueAtivo: input.destaqueAtivo } : {}),
+    ...(input.destaqueCor !== undefined ? { destaqueCor: input.destaqueCor.toUpperCase() } : {}),
+    ...(input.destaqueAltura !== undefined ? { destaqueAltura: input.destaqueAltura } : {}),
     ...(capa
       ? { capa: capa.buffer, capaType: capa.mimeType }
       : input.removeCapa

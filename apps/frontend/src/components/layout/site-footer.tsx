@@ -1,38 +1,38 @@
 import Link from 'next/link';
-import { Logo } from './logo';
 
 const LINKS = [
   { href: '/quem-somos', label: 'Quem somos' },
-  { href: '/termos-de-uso', label: 'Termos de uso' },
   { href: '/politica-de-privacidade', label: 'Política de privacidade' },
+  { href: '/termos-de-uso', label: 'Termos de uso' },
 ];
 
-export function SiteFooter({ logotipoUrl }: { logotipoUrl: string | null }) {
+export function SiteFooter() {
   return (
-    <footer className="mt-16 border-t bg-card">
-      <div className="container flex flex-col gap-6 py-8 sm:flex-row sm:items-center sm:justify-between">
-        <div className="space-y-2">
-          <Logo logotipoUrl={logotipoUrl} />
-          <p className="max-w-xs text-sm text-muted-foreground">
-            Vitrine de artesãs e artesãos de Caraguatatuba, litoral norte de São Paulo.
+    <footer className="mt-16">
+      <div className="container flex flex-wrap justify-between gap-4 pb-7 pt-5 text-[12px] text-muted-foreground">
+        <div className="flex flex-wrap gap-x-6 gap-y-1">
+          <p>© {new Date().getFullYear()} Arteiros Caraguá</p>
+          <p>
+            Central de atendimento:{' '}
+            <a
+              href="mailto:sac@criarte.com.br"
+              className="font-semibold text-foreground transition-colors duration-150 hover:text-primary"
+            >
+              sac@criarte.com.br
+            </a>
           </p>
         </div>
         <nav aria-label="Institucional">
-          <ul className="flex flex-col gap-2 text-sm sm:flex-row sm:gap-6">
+          <ul className="flex flex-wrap gap-4">
             {LINKS.map((link) => (
               <li key={link.href}>
-                <Link href={link.href} className="text-muted-foreground transition-colors hover:text-foreground">
+                <Link href={link.href} className="transition-colors duration-150 hover:text-primary">
                   {link.label}
                 </Link>
               </li>
             ))}
           </ul>
         </nav>
-      </div>
-      <div className="border-t">
-        <p className="container py-4 text-xs text-muted-foreground">
-          © {new Date().getFullYear()} Arteiros Caragua
-        </p>
       </div>
     </footer>
   );

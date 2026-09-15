@@ -1,4 +1,8 @@
-import type { ConfiguracaoSite } from '@arteiroscaragua/shared-types';
+import {
+  DESTAQUE_ALTURA_PADRAO,
+  DESTAQUE_COR_PADRAO,
+  type ConfiguracaoSite,
+} from '@arteiroscaragua/shared-types';
 import type { ConfiguracaoSiteRow } from '../../database/client';
 
 export function toConfiguracaoSiteDTO(row: ConfiguracaoSiteRow | undefined): ConfiguracaoSite {
@@ -9,6 +13,10 @@ export function toConfiguracaoSiteDTO(row: ConfiguracaoSiteRow | undefined): Con
       termosUso: '',
       politicaPrivacidade: '',
       quemSomos: '',
+      destaqueTexto: '',
+      destaqueAtivo: false,
+      destaqueCor: DESTAQUE_COR_PADRAO,
+      destaqueAltura: DESTAQUE_ALTURA_PADRAO,
       updatedAt: null,
     };
   }
@@ -19,6 +27,10 @@ export function toConfiguracaoSiteDTO(row: ConfiguracaoSiteRow | undefined): Con
     termosUso: row.termosUso,
     politicaPrivacidade: row.politicaPrivacidade,
     quemSomos: row.quemSomos,
+    destaqueTexto: row.destaqueTexto,
+    destaqueAtivo: row.destaqueAtivo,
+    destaqueCor: row.destaqueCor,
+    destaqueAltura: row.destaqueAltura,
     updatedAt: row.updatedAt.toISOString(),
   };
 }

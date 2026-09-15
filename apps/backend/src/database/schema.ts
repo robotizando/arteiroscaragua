@@ -325,6 +325,11 @@ export const configuracoesSite = sqliteTable('configuracoes_site', {
   termosUso: text('termos_uso').notNull().default(''),
   politicaPrivacidade: text('politica_privacidade').notNull().default(''),
   quemSomos: text('quem_somos').notNull().default(''),
+  // Barra de destaque exibida acima do cabeçalho do site (texto simples).
+  destaqueTexto: text('destaque_texto').notNull().default(''),
+  destaqueAtivo: integer('destaque_ativo', { mode: 'boolean' }).notNull().default(false),
+  destaqueCor: text('destaque_cor').notNull().default('#B5DCA1'),
+  destaqueAltura: integer('destaque_altura').notNull().default(36),
   updatedAt: integer('updated_at', { mode: 'timestamp' })
     .notNull()
     .$defaultFn(() => new Date()),

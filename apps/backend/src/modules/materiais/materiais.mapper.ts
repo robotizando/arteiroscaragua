@@ -1,6 +1,10 @@
 import type { Material } from '@arteiroscaragua/shared-types';
 import type { MaterialRow } from '../../database/client';
 
+export function materialThumbnailUrl(id: string, updatedAt: Date): string {
+  return `/api/materiais/${id}/thumbnail?v=${updatedAt.getTime()}`;
+}
+
 export function toMaterialDTO(row: MaterialRow): Material {
   return {
     id: row.id,
@@ -8,7 +12,7 @@ export function toMaterialDTO(row: MaterialRow): Material {
     slug: row.slug,
     descricao: row.descricao,
     imagemUrl: row.imagemUrl,
-    thumbnailUrl: row.thumbnail ? `/api/materiais/${row.id}/thumbnail?v=${row.updatedAt.getTime()}` : null,
+    thumbnailUrl: row.thumbnail ? materialThumbnailUrl(row.id, row.updatedAt) : null,
     ordem: row.ordem,
     estado: row.estado,
     createdAt: row.createdAt.toISOString(),
