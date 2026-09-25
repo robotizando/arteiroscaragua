@@ -3,9 +3,7 @@ import { and, asc, eq } from 'drizzle-orm';
 import type { AnySQLiteColumn, SQLiteTable } from 'drizzle-orm/sqlite-core';
 import type { ZodTypeAny } from 'zod';
 import { db } from '../../database/client';
-import { AppError } from '../../middlewares/error-handler';
-import { asyncHandler } from '../../middlewares/error-handler';
-import { requireAdminAuth } from '../../middlewares/require-admin-auth';
+import { AppError, asyncHandler } from '../../middlewares/error-handler';
 
 interface ChildRow {
   id: number;
@@ -34,8 +32,8 @@ export function createChildCollectionRouter<Row extends ChildRow, DTO>(config: C
     return row as Row | undefined;
   }
 
+  // A autenticação vem do router pai (Admin ou perfil do próprio arteiro no site).
   const router = Router({ mergeParams: true });
-  router.use(requireAdminAuth);
 
   router.get(
     '/',

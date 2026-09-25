@@ -65,20 +65,28 @@ export async function getConfiguracaoSite(): Promise<ConfiguracaoSite | null> {
   }
 }
 
-// Chamadas feitas pelo navegador à API de conta.
+// Chamadas feitas pelo navegador à API de conta. O corpo pode ser JSON ou FormData
+// (envio de imagens no perfil do arteiro), e respostas 204 voltam como undefined.
 export async function contaRequest<T>(
   path: string,
-  options: { method?: 'GET' | 'POST'; body?: unknown; token?: string | null } = {},
+  options: {
+    method?: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE';
+    body?: unknown;
+    token?: string | null;
+  } = {},
 ): Promise<T> {
+  const isFormData = typeof FormData !== 'undefined' && options.body instanceof FormData;
   const res = await fetch(`${PUBLIC_API_URL}/api/conta${path}`, {
     method: options.method ?? 'POST',
     headers: {
-      ...(options.body !== undefined ? { 'Content-Type': 'application/json' } : {}),
+      // O navegador precisa definir o Content-Type do FormData (com o boundary).
+      ...(options.body !== undefined && !isFormData ? { 'Content-Type': 'application/json' } : {}),
       ...(options.token ? { Authorization: `Bearer ${options.token}` } : {}),
     },
-    body: options.body !== undefined ? JSON.stringify(options.body) : undefined,
+    body: options.body === undefined ? undefined : isFormData ? (options.body as FormData) : JSON.stringify(options.body),
   });
   if (!res.ok) throw await parseError(res);
+  if (res.status === 204) return undefined as T;
   return res.json() as Promise<T>;
 }
 

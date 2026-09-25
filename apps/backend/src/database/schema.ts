@@ -224,6 +224,8 @@ export const usuarios = sqliteTable('usuarios', {
   estado: text('estado', { enum: USUARIO_STATUSES }).notNull().default('ativo'),
   emailVerificadoEm: integer('email_verificado_em', { mode: 'timestamp' }),
   termosAceitosEm: integer('termos_aceitos_em', { mode: 'timestamp' }),
+  // Respondeu ao modal de boas-vindas ("você é artesã(o)?"). Nulo = ainda não respondeu.
+  boasVindasEm: integer('boas_vindas_em', { mode: 'timestamp' }),
   ultimoLoginEm: integer('ultimo_login_em', { mode: 'timestamp' }),
   // Tokens de sessão emitidos antes desta data deixam de valer (troca/redefinição de senha).
   senhaAlteradaEm: integer('senha_alterada_em', { mode: 'timestamp' }),
@@ -284,6 +286,28 @@ export const usuarioArteiros = sqliteTable(
 );
 
 export type UsuarioArteiroRow = typeof usuarioArteiros.$inferSelect;
+
+// Peças que o usuário marcou como favoritas no site.
+export const usuarioFavoritos = sqliteTable(
+  'usuario_favoritos',
+  {
+    usuarioId: text('usuario_id')
+      .notNull()
+      .references(() => usuarios.id),
+    pecaId: integer('peca_id')
+      .notNull()
+      .references(() => arteiroPecas.id),
+    createdAt: integer('created_at', { mode: 'timestamp' })
+      .notNull()
+      .$defaultFn(() => new Date()),
+  },
+  (table) => ({
+    pk: primaryKey({ columns: [table.usuarioId, table.pecaId] }),
+    pecaIdx: index('usuario_favoritos_peca_idx').on(table.pecaId),
+  }),
+);
+
+export type UsuarioFavoritoRow = typeof usuarioFavoritos.$inferSelect;
 
 // Log de acesso: registra todo login e toda tentativa (admin e usuários normais).
 export const acessosLog = sqliteTable(

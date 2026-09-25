@@ -7,6 +7,8 @@ import { requireUsuarioAuth } from '../../middlewares/require-usuario-auth';
 import { registrarAcesso } from '../acessos/acessos.service';
 import type { GoogleSitePerfil } from './conta.service';
 import * as controller from './conta.controller';
+import * as perfilController from './perfil.controller';
+import perfilArteiroRoutes from './perfil.routes';
 
 const QUINZE_MINUTOS = 15 * 60 * 1000;
 
@@ -68,5 +70,19 @@ router.post('/google/concluir-cadastro', limitePorIp, asyncHandler(controller.co
 
 router.get('/me', requireUsuarioAuth, asyncHandler(controller.me));
 router.post('/aceitar-termos', requireUsuarioAuth, asyncHandler(controller.aceitarTermos));
+
+// Área logada do site.
+router.use(requireUsuarioAuth);
+
+router.get('/perfil', asyncHandler(perfilController.getPerfil));
+router.patch('/perfil', asyncHandler(perfilController.atualizarPerfil));
+router.post('/boas-vindas', asyncHandler(perfilController.responderBoasVindas));
+
+router.get('/favoritos', asyncHandler(perfilController.listarFavoritos));
+router.get('/favoritos/ids', asyncHandler(perfilController.listarFavoritosIds));
+router.put('/favoritos/:pecaId', asyncHandler(perfilController.favoritar));
+router.delete('/favoritos/:pecaId', asyncHandler(perfilController.desfavoritar));
+
+router.use('/arteiros/:arteiroId', perfilArteiroRoutes);
 
 export default router;

@@ -56,6 +56,12 @@ export function MenuMobile() {
               <p className="flex h-11 items-center border-t border-background/20 text-[14px] text-mata-300">
                 Olá, {primeiroNome(usuario.nome)}
               </p>
+              <Link href="/favoritos" onClick={fechar} className={itemClassName}>
+                Favoritos
+              </Link>
+              <Link href="/perfil" onClick={fechar} className={itemClassName}>
+                Meu perfil
+              </Link>
               <button
                 type="button"
                 onClick={() => {

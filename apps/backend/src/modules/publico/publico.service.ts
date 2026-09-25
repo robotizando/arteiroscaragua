@@ -397,3 +397,22 @@ export async function getFiltros(): Promise<PublicoFiltros> {
     arteiros: arteirosRows.map((arteiro) => ({ ...arteiro, createdAt: arteiro.createdAt.toISOString() })),
   };
 }
+
+// Peças favoritadas, na ordem em que os ids chegam (mais recentes primeiro).
+// Peças de arteiros inativos ou excluídos simplesmente somem da lista.
+export async function listPecasPorIds(ids: number[]): Promise<PublicoPecaResumo[]> {
+  if (!ids.length) return [];
+  const rows = await selectPecas().where(and(inArray(arteiroPecas.id, ids), arteiroPublico));
+  const porId = new Map((await toPecaResumos(rows)).map((peca) => [peca.id, peca]));
+  return ids.map((id) => porId.get(id)).filter((peca): peca is PublicoPecaResumo => Boolean(peca));
+}
+
+// Todos os materiais ativos, para o seletor do perfil do arteiro no site.
+// Difere de getFiltros, que só lista os materiais com peças publicadas.
+export async function listMateriais(): Promise<ArteiroMaterialRef[]> {
+  return db
+    .select({ id: materiais.id, nome: materiais.nome })
+    .from(materiais)
+    .where(and(isNull(materiais.deletedAt), eq(materiais.estado, 'ativo')))
+    .orderBy(asc(materiais.ordem), asc(materiais.nome));
+}

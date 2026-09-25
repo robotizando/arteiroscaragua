@@ -1,4 +1,6 @@
 import { z } from 'zod';
+import type { Arteiro } from './arteiro';
+import type { PublicoPecaResumo } from './publico';
 import { senhaSchema, type UsuarioArteiroRef } from './usuario';
 
 // Conta do usuário do site (auto-cadastro e login dos arteiros), separada da Admin.
@@ -58,7 +60,25 @@ export const concluirCadastroGoogleSchema = z.object({
 
 export const aceitarTermosSchema = z.object({ aceiteTermos: aceiteTermosSchema });
 
+// Resposta ao modal de boas-vindas do primeiro acesso. Informar o SICAB cria o perfil de
+// arteiro vinculado; sem ele a pessoa segue como usuária comum (pode se cadastrar depois).
+export const boasVindasSchema = z.object({
+  sicab: z
+    .string()
+    .trim()
+    .min(3, 'Número de cadastro muito curto')
+    .max(50, 'Número de cadastro muito longo')
+    .optional()
+    .or(z.literal('').transform(() => undefined)),
+});
+
+// Campos da própria conta que o usuário edita no site. O e-mail não entra: trocá-lo exigiria
+// uma nova verificação (e hoje ele também é a identidade do login com Google).
+export const atualizarContaSchema = z.object({ nome: nomeSchema });
+
 export type CadastroContaInput = z.infer<typeof cadastroContaSchema>;
+export type BoasVindasInput = z.infer<typeof boasVindasSchema>;
+export type AtualizarContaInput = z.infer<typeof atualizarContaSchema>;
 export type LoginContaInput = z.infer<typeof loginContaSchema>;
 export type RedefinirSenhaInput = z.infer<typeof redefinirSenhaSchema>;
 export type ConcluirCadastroGoogleInput = z.infer<typeof concluirCadastroGoogleSchema>;
@@ -71,6 +91,8 @@ export interface ContaUsuario {
   arteiroVerificado: boolean;
   // Usuários criados pela Admin ainda não aceitaram os termos: o site pede o aceite no primeiro acesso.
   termosPendentes: boolean;
+  // Ainda não respondeu ao modal de boas-vindas ("você é artesã(o)?") do primeiro acesso.
+  boasVindasPendentes: boolean;
   arteiros: UsuarioArteiroRef[];
 }
 
@@ -87,4 +109,19 @@ export interface ContaMeResponse {
 export interface CadastroGooglePayload {
   nome: string;
   email: string;
+}
+
+// Tela de perfil do site: a conta e, para quem é arteiro, o perfil que ela pode editar.
+export interface ContaPerfilResponse {
+  usuario: ContaUsuario;
+  arteiro: Arteiro | null;
+}
+
+// Só os ids, para marcar o coração nos cards sem carregar as peças inteiras.
+export interface FavoritosIdsResponse {
+  ids: number[];
+}
+
+export interface FavoritosResponse {
+  items: PublicoPecaResumo[];
 }

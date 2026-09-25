@@ -8,7 +8,7 @@ import {
 import { AppError } from '../../middlewares/error-handler';
 import * as service from './arteiros.service';
 
-function extractLogotipo(req: Request): service.LogotipoFile | undefined {
+export function extractLogotipo(req: Request): service.LogotipoFile | undefined {
   if (!req.file) return undefined;
   return { buffer: req.file.buffer, mimeType: req.file.mimetype };
 }

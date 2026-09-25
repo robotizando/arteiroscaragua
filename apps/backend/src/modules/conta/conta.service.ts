@@ -4,6 +4,8 @@ import {
   RECUPERACAO_SENHA_VALIDADE_MS,
   VERIFICACAO_EMAIL_VALIDADE_MS,
   type AcessoMetodo,
+  type AtualizarContaInput,
+  type BoasVindasInput,
   type CadastroContaInput,
   type ConcluirCadastroGoogleInput,
   type ContaErroCodigo,
@@ -84,6 +86,7 @@ export async function toContaUsuario(row: UsuarioRow): Promise<ContaUsuario> {
     moderador: row.moderador,
     arteiroVerificado: row.arteiroVerificado,
     termosPendentes: !row.termosAceitosEm,
+    boasVindasPendentes: !row.boasVindasEm,
     arteiros: refs.get(row.id) ?? [],
   };
 }
@@ -98,31 +101,27 @@ async function abrirSessao(req: Request, row: UsuarioRow, metodo: AcessoMetodo):
   return { token: signUsuarioToken(row.id), usuario: await toContaUsuario(atualizado) };
 }
 
-// Auto-cadastro: cria usuário, perfil de arteiro com o mesmo nome e o vínculo, numa transação.
-function criarUsuarioArteiro(values: {
+// Auto-cadastro: cria só a conta. O perfil de arteiro nasce depois, se a pessoa informar o
+// SICAB no modal de boas-vindas do primeiro acesso (ver responderBoasVindas).
+function criarUsuario(values: {
   nome: string;
   email: string;
   senhaHash?: string;
   googleId?: string;
   emailVerificadoEm?: Date;
 }): UsuarioRow {
-  return db.transaction((tx) => {
-    const usuario = tx
-      .insert(usuarios)
-      .values({
-        nome: values.nome,
-        email: values.email,
-        senhaHash: values.senhaHash ?? null,
-        googleId: values.googleId ?? null,
-        emailVerificadoEm: values.emailVerificadoEm ?? null,
-        termosAceitosEm: new Date(),
-      })
-      .returning()
-      .get();
-    const arteiro = tx.insert(arteiros).values({ nome: values.nome }).returning({ id: arteiros.id }).get();
-    tx.insert(usuarioArteiros).values({ usuarioId: usuario.id, arteiroId: arteiro.id }).run();
-    return usuario;
-  });
+  return db
+    .insert(usuarios)
+    .values({
+      nome: values.nome,
+      email: values.email,
+      senhaHash: values.senhaHash ?? null,
+      googleId: values.googleId ?? null,
+      emailVerificadoEm: values.emailVerificadoEm ?? null,
+      termosAceitosEm: new Date(),
+    })
+    .returning()
+    .get();
 }
 
 function enviarVerificacao(row: UsuarioRow) {
@@ -155,7 +154,7 @@ export async function cadastrar(input: CadastroContaInput): Promise<void> {
     return;
   }
 
-  const usuario = criarUsuarioArteiro({ nome: input.nome, email: input.email, senhaHash });
+  const usuario = criarUsuario({ nome: input.nome, email: input.email, senhaHash });
   await enviarVerificacao(usuario);
 }
 
@@ -315,7 +314,7 @@ export async function concluirCadastroGoogle(
     throw new AppError('Já existe uma conta com este e-mail. Entre com o Google novamente.', 409, 'email_em_uso');
   }
 
-  const row = criarUsuarioArteiro({
+  const row = criarUsuario({
     nome: dados.nome,
     email: dados.email,
     googleId: dados.googleId,
@@ -330,5 +329,40 @@ export async function aceitarTermos(row: UsuarioRow): Promise<ContaUsuario> {
     .set({ termosAceitosEm: row.termosAceitosEm ?? new Date(), updatedAt: new Date() })
     .where(eq(usuarios.id, row.id))
     .returning();
+  return toContaUsuario(atualizado);
+}
+
+export async function atualizarConta(row: UsuarioRow, input: AtualizarContaInput): Promise<ContaUsuario> {
+  const [atualizado] = await db
+    .update(usuarios)
+    .set({ nome: input.nome, updatedAt: new Date() })
+    .where(eq(usuarios.id, row.id))
+    .returning();
+  return toContaUsuario(atualizado);
+}
+
+// Resposta ao modal do primeiro acesso. Com o SICAB, cria o perfil de arteiro (em branco,
+// para a pessoa completar no perfil) e o vínculo; sem ele, só marca o modal como respondido.
+export async function responderBoasVindas(row: UsuarioRow, input: BoasVindasInput): Promise<ContaUsuario> {
+  const jaVinculado = await loadArteiroRefs([row.id]);
+  const criarArteiro = Boolean(input.sicab) && !jaVinculado.get(row.id)?.length;
+
+  const atualizado = db.transaction((tx) => {
+    if (criarArteiro) {
+      const arteiro = tx
+        .insert(arteiros)
+        .values({ nome: row.nome, sicab: input.sicab })
+        .returning({ id: arteiros.id })
+        .get();
+      tx.insert(usuarioArteiros).values({ usuarioId: row.id, arteiroId: arteiro.id }).run();
+    }
+    return tx
+      .update(usuarios)
+      .set({ boasVindasEm: row.boasVindasEm ?? new Date(), updatedAt: new Date() })
+      .where(eq(usuarios.id, row.id))
+      .returning()
+      .get();
+  });
+
   return toContaUsuario(atualizado);
 }

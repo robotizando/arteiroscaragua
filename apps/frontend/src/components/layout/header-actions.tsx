@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { LogOut } from 'lucide-react';
+import { Heart, LogOut } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
 import { primeiroNome } from '@/lib/utils';
 import { buttonClassName } from '@/components/ui/button';
@@ -15,9 +15,16 @@ export function HeaderActions() {
   if (usuario) {
     return (
       <>
-        <span className="text-mata-300">
+        <Link
+          href="/favoritos"
+          className="flex items-center gap-1.5 text-mata-300 transition-colors duration-150 hover:text-background"
+        >
+          <Heart className="h-4 w-4" aria-hidden />
+          Favoritos
+        </Link>
+        <Link href="/perfil" className="text-mata-300 transition-colors duration-150 hover:text-background">
           Olá, <span className="font-semibold text-background">{primeiroNome(usuario.nome)}</span>
-        </span>
+        </Link>
         <button
           type="button"
           onClick={sair}

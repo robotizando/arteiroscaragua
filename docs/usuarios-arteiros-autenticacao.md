@@ -2,11 +2,14 @@
 
 Status: **implementado** (backend `apps/backend/src/modules/conta`, telas em `apps/frontend`).
 Cadastro, confirmação de e-mail, login (e-mail/senha e Google), recuperação de senha, aceite
-de termos pendente e `GET /me` estão prontos. Faltam a área logada do site e o
-`PATCH /arteiros/:id` (edição do próprio perfil). O plano original segue abaixo como referência.
+de termos, `GET /me` e a área logada do site (boas-vindas, perfil e favoritos) estão prontos.
+O plano original segue abaixo como referência.
 
 Diferenças em relação ao plano:
 
+- **O cadastro não cria mais um perfil de arteiro.** Quem se cadastra vira usuário comum; no
+  primeiro acesso um modal pergunta se a pessoa é artesã e, com o número do SICAB, cria o perfil
+  de arteiro em branco (ver "Primeiro acesso e perfil" abaixo).
 - O token de sessão (e o de cadastro pendente do Google) volta do backend no fragmento da URL
   (`/auth/callback#token=...`), não na query, para não aparecer em logs do servidor do site.
 - Um cadastro com e-mail já existente responde igual a um cadastro novo (201); o dono do e-mail
@@ -54,8 +57,27 @@ e é desmarcado automaticamente quando o vínculo é trocado ou removido.
 - **Ao se cadastrar como arteiro**: numa única transação, criar `usuarios`,
   criar `arteiros` (nome do usuário) e criar o vínculo em `usuario_arteiros`.
   O `usuarios.service.createUsuario` já faz isso e pode ser reaproveitado.
+  (Mudou: no site isso acontece no modal de boas-vindas, não no cadastro — ver acima.)
 - **Todo login e toda tentativa** (sucesso ou falha, inclusive verificação/recuperação
   malsucedida) chamam `registrarAcesso(req, { ator: 'usuario', ... })`.
+
+## Primeiro acesso e perfil (área logada do site)
+
+- `usuarios.boas_vindas_em` marca que a pessoa já respondeu ao modal do primeiro acesso.
+  A migração `0011` preencheu a coluna para as contas que já existiam.
+- `POST /api/conta/boas-vindas { sicab? }` responde ao modal: com o SICAB, cria `arteiros`
+  (só com nome e SICAB) e o vínculo em `usuario_arteiros`, numa transação; sem ele, apenas
+  marca o modal como respondido. Quem recusou pode criar o perfil depois, em "Meu perfil".
+- `GET /api/conta/perfil` devolve a conta e, para quem é arteiro, o perfil completo.
+  `PATCH /api/conta/perfil` edita o nome da conta (o e-mail não é editável no site).
+- `/api/conta/arteiros/:arteiroId/...` espelha as rotas de edição da Admin (dados, materiais,
+  peças e coleções filhas), mas um middleware exige que o `:arteiroId` seja o perfil vinculado
+  a quem está logado — qualquer outro id responde 404. Os routers de `pecas` e das coleções
+  filhas são os mesmos das rotas da Admin: a autenticação fica em quem monta.
+- Favoritos: tabela `usuario_favoritos` (usuário + peça) e as rotas `GET /api/conta/favoritos`,
+  `GET /api/conta/favoritos/ids` (para marcar o coração nos cards), `PUT` e `DELETE`
+  `/api/conta/favoritos/:pecaId`. Só peças de arteiros ativos podem ser favoritadas.
+- `GET /api/publico/materiais` lista os materiais ativos para os seletores do perfil.
 
 ## O que falta implementar
 
@@ -111,6 +133,8 @@ export const usuarioTokens = sqliteTable('usuario_tokens', {
 | POST | `/redefinir-senha` | `{ token, senha }` → valida política, grava hash, consome token. |
 | GET | `/me` | Dados do usuário e seus perfis de arteiro. |
 | PATCH | `/arteiros/:id` | Edição do próprio perfil (verificar vínculo em `usuario_arteiros`). |
+
+(Os dois últimos estão prontos; ver "Primeiro acesso e perfil".)
 
 ### 5. Fluxo Google (site)
 

@@ -1,29 +1,15 @@
 import { Router } from 'express';
-import multer from 'multer';
-import { ARTEIRO_PECA_IMAGEM_MAX_BYTES, ARTEIRO_PECA_IMAGEM_MIME_TYPES, ARTEIRO_PECA_MAX_IMAGENS } from '@arteiroscaragua/shared-types';
-import { requireAdminAuth } from '../../middlewares/require-admin-auth';
 import { asyncHandler } from '../../middlewares/error-handler';
 import * as controller from './pecas.controller';
+import { uploadPecaImagens } from './uploads';
 
-const upload = multer({
-  storage: multer.memoryStorage(),
-  limits: { fileSize: ARTEIRO_PECA_IMAGEM_MAX_BYTES, files: ARTEIRO_PECA_MAX_IMAGENS },
-  fileFilter: (_req, file, cb) => {
-    if (!(ARTEIRO_PECA_IMAGEM_MIME_TYPES as readonly string[]).includes(file.mimetype)) {
-      cb(new Error('Formato de imagem não suportado'));
-      return;
-    }
-    cb(null, true);
-  },
-});
-
+// Montado sob /:arteiroId/pecas pela Admin e pelo perfil do próprio arteiro no site:
+// a autenticação (e, no site, a checagem de que o arteiro é o da pessoa) fica no router pai.
 const router = Router({ mergeParams: true });
 
-router.use(requireAdminAuth);
-
 router.get('/', asyncHandler(controller.list));
-router.post('/', upload.array('imagens', ARTEIRO_PECA_MAX_IMAGENS), asyncHandler(controller.create));
-router.patch('/:pecaId', upload.array('imagens', ARTEIRO_PECA_MAX_IMAGENS), asyncHandler(controller.update));
+router.post('/', uploadPecaImagens, asyncHandler(controller.create));
+router.patch('/:pecaId', uploadPecaImagens, asyncHandler(controller.update));
 router.delete('/:pecaId', asyncHandler(controller.remove));
 router.delete('/:pecaId/imagens/:imagemId', asyncHandler(controller.removeImagem));
 

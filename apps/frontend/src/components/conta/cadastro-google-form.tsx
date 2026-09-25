@@ -76,7 +76,7 @@ export function CadastroGoogleForm() {
   return (
     <AuthShell
       titulo={dados ? `Quase lá, ${dados.nome.split(' ')[0]}!` : 'Quase lá!'}
-      descricao="Confirme os dados da sua conta Google para criar seu espaço na vitrine."
+      descricao="Confirme os dados da sua conta Google para criar sua conta no Arteiros Caragua."
     >
       <div className="space-y-5">
         {dados && (

@@ -40,6 +40,10 @@ export async function getArteiro(req: Request, res: Response) {
   res.json({ arteiro });
 }
 
+export async function listMateriais(_req: Request, res: Response) {
+  res.json({ items: await service.listMateriais() });
+}
+
 export async function getFiltros(_req: Request, res: Response) {
   res.json(await service.getFiltros());
 }

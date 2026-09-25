@@ -37,18 +37,36 @@ export const PasswordInput = React.forwardRef<HTMLInputElement, React.InputHTMLA
 );
 PasswordInput.displayName = 'PasswordInput';
 
+export const Textarea = React.forwardRef<HTMLTextAreaElement, React.TextareaHTMLAttributes<HTMLTextAreaElement>>(
+  ({ className, rows = 4, ...props }, ref) => (
+    <textarea
+      ref={ref}
+      rows={rows}
+      className={cn(inputClassName, 'h-auto min-h-[88px] py-2 leading-relaxed', className)}
+      {...props}
+    />
+  ),
+);
+Textarea.displayName = 'Textarea';
+
+export const Select = React.forwardRef<HTMLSelectElement, React.SelectHTMLAttributes<HTMLSelectElement>>(
+  ({ className, ...props }, ref) => <select ref={ref} className={cn(inputClassName, 'pr-8', className)} {...props} />,
+);
+Select.displayName = 'Select';
+
 interface FieldProps {
   id: string;
   label: string;
   error?: string;
   hint?: React.ReactNode;
   children: React.ReactElement<{ id?: string; 'aria-invalid'?: boolean; 'aria-describedby'?: string }>;
+  className?: string;
 }
 
-export function Field({ id, label, error, hint, children }: FieldProps) {
+export function Field({ id, label, error, hint, children, className }: FieldProps) {
   const describedBy = error ? `${id}-erro` : hint ? `${id}-dica` : undefined;
   return (
-    <div className="space-y-1.5">
+    <div className={cn('space-y-1.5', className)}>
       <label htmlFor={id} className="block text-sm font-medium">
         {label}
       </label>

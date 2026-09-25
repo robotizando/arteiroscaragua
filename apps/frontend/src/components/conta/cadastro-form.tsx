@@ -73,8 +73,8 @@ export function CadastroForm() {
 
   return (
     <AuthShell
-      titulo="Cadastre-se como Arteiro/Artesão"
-      descricao="Crie seu espaço na vitrine e mostre suas peças a quem visita o Arteiros Caragua."
+      titulo="Crie sua conta"
+      descricao="Para guardar as peças que você gostou e, se você é artesã ou artesão, montar seu espaço na vitrine."
       rodape={
         <>
           Já tem conta?{' '}

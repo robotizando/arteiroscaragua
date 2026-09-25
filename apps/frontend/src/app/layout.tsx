@@ -1,11 +1,13 @@
 import type { Metadata } from 'next';
 import { Archivo } from 'next/font/google';
 import { AuthProvider } from '@/lib/auth-context';
+import { FavoritosProvider } from '@/lib/favoritos-context';
 import { assetUrl, getConfiguracaoSite } from '@/lib/api';
 import { BarraDestaque } from '@/components/layout/barra-destaque';
 import { SiteHeader } from '@/components/layout/site-header';
 import { SiteFooter } from '@/components/layout/site-footer';
 import { TermosGate } from '@/components/conta/termos-gate';
+import { BoasVindasGate } from '@/components/conta/boas-vindas-gate';
 import './globals.css';
 
 // Uma família só; --font-display aponta para --font-sans em globals.css.
@@ -36,11 +38,14 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <html lang="pt-BR" className={sans.variable}>
       <body className="flex min-h-screen flex-col font-sans antialiased">
         <AuthProvider>
-          <BarraDestaque configuracao={configuracao} />
-          <SiteHeader logotipoUrl={configuracao?.logotipoUrl ?? null} />
-          <main className="flex-1">{children}</main>
-          <SiteFooter />
-          <TermosGate />
+          <FavoritosProvider>
+            <BarraDestaque configuracao={configuracao} />
+            <SiteHeader logotipoUrl={configuracao?.logotipoUrl ?? null} />
+            <main className="flex-1">{children}</main>
+            <SiteFooter />
+            <TermosGate />
+            <BoasVindasGate />
+          </FavoritosProvider>
         </AuthProvider>
       </body>
     </html>

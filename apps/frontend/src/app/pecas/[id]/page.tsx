@@ -9,6 +9,7 @@ import { formatarNomePeca, formatarValor } from '@/lib/utils';
 import { PecaGaleria } from '@/components/pecas/peca-galeria';
 import { ContatoWhatsapp } from '@/components/pecas/contato-whatsapp';
 import { PecasGrid } from '@/components/pecas/peca-card';
+import { FavoritoBotao } from '@/components/pecas/favorito-botao';
 import { ArteiroDestaque } from '@/components/arteiros/arteiro-card';
 
 type Params = Promise<{ id: string }>;
@@ -59,6 +60,8 @@ export default async function PecaPage({ params }: { params: Params }) {
               {arteiro.nome}
             </Link>
           </p>
+
+          <FavoritoBotao pecaId={peca.id} comRotulo className="mt-5" />
 
           <div className="mt-8 border-y py-5">
             <p className="text-xs uppercase tracking-wide text-muted-foreground">Valor sugerido</p>
