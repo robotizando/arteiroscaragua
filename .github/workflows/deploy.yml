@@ -1,0 +1,163 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      rollback_sha:
+        description: 'SHA de uma release no servidor (vazio = deploy normal da main)'
+        required: false
+        default: ''
+      rollback_previous:
+        description: 'Voltar para a release anterior'
+        type: boolean
+        default: false
+
+concurrency:
+  group: producao
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  BASE_DIR: /var/www/arteiroscaragua
+
+jobs:
+  ci:
+    if: ${{ github.ref == 'refs/heads/main' && github.event.inputs.rollback_sha == '' && github.event.inputs.rollback_previous != 'true' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      NEXT_PUBLIC_API_URL: ${{ vars.NEXT_PUBLIC_API_URL }}
+      NEXT_PUBLIC_SITE_URL: ${{ vars.NEXT_PUBLIC_SITE_URL }}
+      NEXT_TELEMETRY_DISABLED: '1'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Conferir URLs de build
+        run: |
+          case "$NEXT_PUBLIC_API_URL" in https://*/api|https://*/api/|*/) echo "NEXT_PUBLIC_API_URL não pode terminar em /api nem em /"; exit 1;; https://*) ;; *) echo "Defina a variable NEXT_PUBLIC_API_URL com https"; exit 1;; esac
+          case "$NEXT_PUBLIC_SITE_URL" in */) echo "NEXT_PUBLIC_SITE_URL não pode terminar em /"; exit 1;; https://*) ;; *) echo "Defina a variable NEXT_PUBLIC_SITE_URL com https"; exit 1;; esac
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm lint
+
+      - run: pnpm exec turbo run build --force
+
+      - run: pnpm typecheck
+
+      - name: Testar migrações em banco temporário
+        working-directory: apps/backend
+        env:
+          DATABASE_URL: ${{ runner.temp }}/ci.sqlite
+        run: node dist/database/migrate.js
+
+      - name: Empacotar release
+        run: |
+          shopt -s nullglob
+          tar -czf "$RUNNER_TEMP/release.tar.gz" \
+            --exclude='node_modules' --exclude='.next/cache' \
+            package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc .nvmrc deploy packages \
+            apps/backend/package.json apps/backend/dist apps/backend/drizzle \
+            apps/admin/package.json apps/admin/next.config.js apps/admin/.next \
+            apps/frontend/package.json apps/frontend/next.config.js apps/frontend/.next \
+            apps/*/public
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release
+          path: ${{ runner.temp }}/release.tar.gz
+          retention-days: 7
+          if-no-files-found: error
+
+  deploy:
+    needs: ci
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    environment: production
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: release
+
+      - name: Configurar SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
+        run: |
+          install -d -m 700 ~/.ssh
+          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
+          printf '%s\n' "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/deploy_key ~/.ssh/known_hosts
+
+      - name: Enviar e ativar release
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SHA: ${{ github.sha }}
+        run: |
+          OPTS=(-i ~/.ssh/deploy_key -o BatchMode=yes -o StrictHostKeyChecking=yes)
+          scp -P "$SSH_PORT" "${OPTS[@]}" release.tar.gz "$SSH_USER@$SSH_HOST:$BASE_DIR/incoming/$SHA.tar.gz"
+          ssh -p "$SSH_PORT" "${OPTS[@]}" "$SSH_USER@$SSH_HOST" bash -s -- "$SHA" "$BASE_DIR" <<'REMOTO'
+          set -euo pipefail
+          SHA="$1"; BASE_DIR="$2"
+          RELEASE="$BASE_DIR/releases/$SHA"
+          if [ "$(readlink -f "$BASE_DIR/current" 2>/dev/null || true)" = "$RELEASE" ]; then
+            echo "Release $SHA já está ativa."
+            rm -f "$BASE_DIR/incoming/$SHA.tar.gz"
+            exit 0
+          fi
+          rm -rf "$RELEASE"
+          mkdir -p "$RELEASE"
+          tar -xzf "$BASE_DIR/incoming/$SHA.tar.gz" -C "$RELEASE"
+          rm -f "$BASE_DIR/incoming/$SHA.tar.gz"
+          bash "$RELEASE/deploy/scripts/release.sh" "$SHA"
+          REMOTO
+
+      - name: Remover chave
+        if: always()
+        run: rm -f ~/.ssh/deploy_key
+
+  rollback:
+    if: ${{ github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' && (github.event.inputs.rollback_sha != '' || github.event.inputs.rollback_previous == 'true') }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    environment: production
+    steps:
+      - name: Configurar SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
+        run: |
+          install -d -m 700 ~/.ssh
+          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
+          printf '%s\n' "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/deploy_key ~/.ssh/known_hosts
+
+      - name: Executar rollback
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          ROLLBACK_SHA: ${{ github.event.inputs.rollback_sha }}
+        run: |
+          if [ -n "$ROLLBACK_SHA" ] && ! [[ "$ROLLBACK_SHA" =~ ^[0-9a-f]{7,40}$ ]]; then
+            echo "SHA inválido"; exit 1
+          fi
+          ssh -p "$SSH_PORT" -i ~/.ssh/deploy_key -o BatchMode=yes -o StrictHostKeyChecking=yes \
+            "$SSH_USER@$SSH_HOST" bash "$BASE_DIR/current/deploy/scripts/rollback.sh" $ROLLBACK_SHA
+
+      - name: Remover chave
+        if: always()
+        run: rm -f ~/.ssh/deploy_key

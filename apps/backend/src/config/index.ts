@@ -1,10 +1,34 @@
 import { config as loadEnv } from 'dotenv';
 
-loadEnv({ path: '.env.local' });
+// .env.local tem prioridade sobre .env; variáveis já definidas no processo nunca são sobrescritas.
+loadEnv({ path: ['.env.local', '.env'] });
+
+const SEGREDOS_INSEGUROS = new Set([
+  'dev-secret-troque-em-producao',
+  'dev-user-secret-troque-em-producao',
+  'troque-por-um-segredo-forte',
+  'troque-por-outro-segredo-forte',
+]);
+
+function exigirSegredoEmProducao(nome: 'JWT_SECRET' | 'USER_JWT_SECRET'): void {
+  const valor = process.env[nome];
+  if (!valor || valor.length < 32 || SEGREDOS_INSEGUROS.has(valor)) {
+    throw new Error(`${nome} ausente ou inseguro: defina um valor próprio com ao menos 32 caracteres.`);
+  }
+}
+
+if (process.env.NODE_ENV === 'production') {
+  exigirSegredoEmProducao('JWT_SECRET');
+  exigirSegredoEmProducao('USER_JWT_SECRET');
+  if (process.env.JWT_SECRET === process.env.USER_JWT_SECRET) {
+    throw new Error('JWT_SECRET e USER_JWT_SECRET precisam ser diferentes.');
+  }
+}
 
 export const config = {
   nodeEnv: process.env.NODE_ENV || 'development',
   isProduction: process.env.NODE_ENV === 'production',
+  host: process.env.HOST || undefined,
   port: Number(process.env.PORT || 4001),
   backendUrl: process.env.BACKEND_URL || 'http://localhost:4001',
   adminUrl: process.env.ADMIN_URL || 'http://localhost:4002',
