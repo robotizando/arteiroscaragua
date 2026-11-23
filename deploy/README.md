@@ -22,10 +22,10 @@ Cada push na `main` roda lint, build, typecheck e teste de migrações no GitHub
 
 ## Configuração do GitHub
 
-Crie o environment `production` e cadastre:
+O passo a passo completo está em [docs/ci-cd.md](../docs/ci-cd.md).
 
-- **Secrets:** `SSH_HOST`, `SSH_PORT`, `SSH_USER` (`deploy`), `SSH_PRIVATE_KEY`, `SSH_KNOWN_HOSTS`.
-- **Variables:** `NEXT_PUBLIC_API_URL=https://arteiroscaragua.com.br` (sem `/api`) e `NEXT_PUBLIC_SITE_URL=https://arteiroscaragua.com.br`.
+- **Secrets do environment `production`:** `SSH_HOST`, `SSH_PORT`, `SSH_USER` (`deploy`), `SSH_PRIVATE_KEY`, `SSH_KNOWN_HOSTS`.
+- **Variables do repositório:** `NEXT_PUBLIC_API_URL=https://arteiroscaragua.com.br` (sem `/api`) e `NEXT_PUBLIC_SITE_URL=https://arteiroscaragua.com.br`.
 
 ## Instalação do servidor
 

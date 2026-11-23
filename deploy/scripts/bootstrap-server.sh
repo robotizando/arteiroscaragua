@@ -10,6 +10,8 @@ NODE_MAJOR=22
 PNPM_VERSION=10.33.0
 PM2_VERSION=6
 DEPLOY_DIR="$(cd "$(dirname "$(readlink -f "$0")")/.." && pwd)"
+# O usuário deploy não consegue executar comandos a partir de /root.
+cd /
 
 [ "$(id -u)" -eq 0 ] || { echo "Execute como root."; exit 1; }
 . /etc/os-release
@@ -70,6 +72,11 @@ sudo -u "$APP_USER" -H pm2 set pm2-logrotate:compress true >/dev/null
 env PATH="$PATH" pm2 startup systemd -u "$APP_USER" --hp "/home/$APP_USER" >/dev/null
 sudo -u "$APP_USER" -H pm2 save --force >/dev/null
 systemctl enable "pm2-$APP_USER" >/dev/null
+# Passa o daemon para o systemd, que o mantém ativo e o inicia após um reboot.
+if ! systemctl is-active --quiet "pm2-$APP_USER"; then
+  sudo -u "$APP_USER" -H pm2 kill >/dev/null
+  systemctl start "pm2-$APP_USER"
+fi
 
 echo "==> Nginx"
 install -d -m 700 -o www-data -g www-data /var/cache/nginx/arteiros
@@ -99,4 +106,4 @@ ufw default allow outgoing
 ufw --force enable
 
 systemctl enable --now fail2ban
-echo "==> Concluído: node $(node -v), pnpm $(pnpm -v), pm2 $(pm2 -v)"
+echo "==> Concluído: node $(node -v), pnpm $(pnpm -v), pm2 $(sudo -u "$APP_USER" -H pm2 -v | tail -1)"
