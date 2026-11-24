@@ -38,7 +38,8 @@ Existem três lugares diferentes, e cada um tem uma função. Os arquivos `.env.
 |---|---|---|---|
 | GitHub, **environment** `production`, Secrets | Acesso SSH ao servidor | Job `deploy` | No próximo deploy |
 | GitHub, **repositório**, Variables | URLs públicas do build | Job `ci` | No próximo build |
-| Servidor, `/var/www/arteiroscaragua/shared/.env` | Segredos e configuração da API | API em execução | Após reiniciar a API |
+| GitHub, **repositório**, Secrets | Google, SMTP, `EMAIL_FROM` e `JWT_EXPIRES_IN` | Job `deploy`, que grava no servidor | No próximo deploy |
+| Servidor, `/var/www/arteiroscaragua/shared/.env` | Configuração final lida pela API | API em execução | Após reiniciar a API |
 
 Nunca coloque chave privada, senha ou segredo JWT em um arquivo versionado.
 
@@ -136,7 +137,17 @@ Os valores dos secrets não são exibidos, e isso é esperado.
 
 ## Configuração da API no servidor
 
-O script de instalação cria `/var/www/arteiroscaragua/shared/.env` a partir de [`deploy/env.production.example`](../deploy/env.production.example) e gera os segredos JWT. Falta preencher os serviços externos:
+O script de instalação cria `/var/www/arteiroscaragua/shared/.env` a partir de [`deploy/env.production.example`](../deploy/env.production.example) e gera os segredos JWT.
+
+A cada deploy, o workflow copia para esse arquivo os secrets de repositório abaixo, quando preenchidos:
+
+`GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASS`, `EMAIL_FROM` e `JWT_EXPIRES_IN`.
+
+- Para alterar um deles, atualize o secret no GitHub e rode **Actions > CI/CD > Run workflow**. Uma edição manual no servidor é sobrescrita no deploy seguinte.
+- Apagar um secret no GitHub **não** apaga o valor do servidor.
+- `JWT_SECRET` e `USER_JWT_SECRET` nunca são copiados e continuam sendo os gerados no servidor.
+
+Para os demais valores, edite o arquivo no servidor:
 
 ```bash
 sudo -iu deploy nano /var/www/arteiroscaragua/shared/.env

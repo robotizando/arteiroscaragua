@@ -100,6 +100,30 @@ jobs:
           printf '%s\n' "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
           chmod 600 ~/.ssh/deploy_key ~/.ssh/known_hosts
 
+      - name: Sincronizar configuração da API
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_SECURE: ${{ secrets.SMTP_SECURE }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
+          JWT_EXPIRES_IN: ${{ secrets.JWT_EXPIRES_IN }}
+        run: |
+          OPTS=(-i ~/.ssh/deploy_key -o BatchMode=yes -o StrictHostKeyChecking=yes)
+          PAYLOAD="$BASE_DIR/incoming/.env-sync.json"
+          node -e '
+            const chaves = ["GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_SECRET", "SMTP_HOST", "SMTP_PORT", "SMTP_SECURE", "SMTP_USER", "SMTP_PASS", "EMAIL_FROM", "JWT_EXPIRES_IN"];
+            process.stdout.write(JSON.stringify(Object.fromEntries(chaves.map((c) => [c, process.env[c] || ""]))));
+          ' | ssh -p "$SSH_PORT" "${OPTS[@]}" "$SSH_USER@$SSH_HOST" "umask 077; cat > '$PAYLOAD'"
+          tar -xzOf release.tar.gz deploy/scripts/sync-env.cjs \
+            | ssh -p "$SSH_PORT" "${OPTS[@]}" "$SSH_USER@$SSH_HOST" "node - '$BASE_DIR/shared/.env' '$PAYLOAD'"
+
       - name: Enviar e ativar release
         env:
           SSH_HOST: ${{ secrets.SSH_HOST }}
@@ -114,8 +138,10 @@ jobs:
           SHA="$1"; BASE_DIR="$2"
           RELEASE="$BASE_DIR/releases/$SHA"
           if [ "$(readlink -f "$BASE_DIR/current" 2>/dev/null || true)" = "$RELEASE" ]; then
-            echo "Release $SHA já está ativa."
+            echo "Release $SHA já está ativa. Reiniciando a API para aplicar a configuração."
             rm -f "$BASE_DIR/incoming/$SHA.tar.gz"
+            pm2 restart arteiros-api --update-env
+            pm2 save --force
             exit 0
           fi
           rm -rf "$RELEASE"
