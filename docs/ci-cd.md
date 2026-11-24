@@ -26,9 +26,9 @@ No servidor, o Nginx recebe o tráfego público e o PM2 mantém os apps rodando 
 
 | Endereço público | App | Porta interna |
 |---|---|---|
-| `arteiroscaragua.com.br` | Site | `127.0.0.1:4003` |
-| `arteiroscaragua.com.br/api` | API | `127.0.0.1:4001` |
-| `admin.arteiroscaragua.com.br` | Admin | `127.0.0.1:4002` |
+| `arteiros.robotizando.com.br` | Site | `127.0.0.1:4003` |
+| `arteiros.robotizando.com.br/api` | API | `127.0.0.1:4001` |
+| `admin.arteiros.robotizando.com.br` | Admin | `127.0.0.1:4002` |
 
 ## Onde cada configuração fica
 
@@ -115,8 +115,8 @@ Pela interface web, o caminho é **Settings > Environments > production > Enviro
 ### 5. Criar as variáveis de build
 
 ```bash
-gh variable set NEXT_PUBLIC_API_URL --body "https://arteiroscaragua.com.br"
-gh variable set NEXT_PUBLIC_SITE_URL --body "https://arteiroscaragua.com.br"
+gh variable set NEXT_PUBLIC_API_URL --body "https://arteiros.robotizando.com.br"
+gh variable set NEXT_PUBLIC_SITE_URL --body "https://arteiros.robotizando.com.br"
 ```
 
 Pela interface web, use **Settings > Secrets and variables > Actions > Variables > Repository variables**.
@@ -153,8 +153,8 @@ sudo -iu deploy pm2 restart arteiros-api
 
 No Google Cloud, autorize estes redirects:
 
-- `https://arteiroscaragua.com.br/api/auth/google/callback`
-- `https://arteiroscaragua.com.br/api/conta/google/callback`
+- `https://arteiros.robotizando.com.br/api/auth/google/callback`
+- `https://arteiros.robotizando.com.br/api/conta/google/callback`
 
 ## O que acontece em um deploy
 
@@ -200,7 +200,7 @@ O rollback **não desfaz migrações**. Se uma migração causou o problema, res
 | `DATABASE_URL precisa ser ...` | Caminho alterado no `.env` do servidor | Restaure o valor padrão |
 | `JWT_SECRET ausente ou inseguro` | Segredo vazio, curto ou de exemplo | Gere com `openssl rand -hex 48` |
 | `Health check falhou` | App não iniciou | Veja `pm2 logs arteiros-api` |
-| Site chama uma URL errada | Variável de build mudou depois do build | Corrija e rode o workflow de novo |
+| Site chama uma URL errada | Variável de build mudou depois do build | Corrija e faça um novo commit na `main`, pois reexecutar o mesmo commit não gera outro build |
 
 ## Segurança
 

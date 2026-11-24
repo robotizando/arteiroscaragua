@@ -4,9 +4,9 @@ Cada push na `main` roda lint, build, typecheck e teste de migrações no GitHub
 
 | Endereço | Destino |
 |---|---|
-| `arteiroscaragua.com.br` | site, `127.0.0.1:4003` |
-| `arteiroscaragua.com.br/api` | API, `127.0.0.1:4001` |
-| `admin.arteiroscaragua.com.br` | admin, `127.0.0.1:4002` |
+| `arteiros.robotizando.com.br` | site, `127.0.0.1:4003` |
+| `arteiros.robotizando.com.br/api` | API, `127.0.0.1:4001` |
+| `admin.arteiros.robotizando.com.br` | admin, `127.0.0.1:4002` |
 
 ## Estrutura no servidor
 
@@ -25,7 +25,7 @@ Cada push na `main` roda lint, build, typecheck e teste de migrações no GitHub
 O passo a passo completo está em [docs/ci-cd.md](../docs/ci-cd.md).
 
 - **Secrets do environment `production`:** `SSH_HOST`, `SSH_PORT`, `SSH_USER` (`deploy`), `SSH_PRIVATE_KEY`, `SSH_KNOWN_HOSTS`.
-- **Variables do repositório:** `NEXT_PUBLIC_API_URL=https://arteiroscaragua.com.br` (sem `/api`) e `NEXT_PUBLIC_SITE_URL=https://arteiroscaragua.com.br`.
+- **Variables do repositório:** `NEXT_PUBLIC_API_URL=https://arteiros.robotizando.com.br` (sem `/api`) e `NEXT_PUBLIC_SITE_URL=https://arteiros.robotizando.com.br`.
 
 ## Instalação do servidor
 
@@ -50,11 +50,11 @@ Rode o importador em `scripts/crawler-site-atual/crawler.py` com `--db /var/www/
 
 ## Virada do DNS e HTTPS
 
-Aponte `@`, `www` e `admin` para o servidor e, com o DNS propagado, execute como root:
+Aponte `arteiros` e `admin.arteiros` para o servidor e, com o DNS propagado, execute como root:
 
 ```bash
 certbot --nginx --redirect \
-  -d arteiroscaragua.com.br -d www.arteiroscaragua.com.br -d admin.arteiroscaragua.com.br
+  -d arteiros.robotizando.com.br -d admin.arteiros.robotizando.com.br
 certbot renew --dry-run
 ```
 
