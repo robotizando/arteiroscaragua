@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Archivo } from 'next/font/google';
+import localFont from 'next/font/local';
 import { AuthProvider } from '@/lib/auth-context';
 import { FavoritosProvider } from '@/lib/favoritos-context';
 import { assetUrl, getConfiguracaoSite } from '@/lib/api';
@@ -11,9 +11,14 @@ import { BoasVindasGate } from '@/components/conta/boas-vindas-gate';
 import './globals.css';
 
 // Uma família só; --font-display aponta para --font-sans em globals.css.
-const sans = Archivo({
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '800'],
+// Archivo variável (subset latin) versionada no projeto, para o build não depender do Google Fonts.
+const sans = localFont({
+  src: [
+    { path: './fonts/archivo-latin.woff2', weight: '400', style: 'normal' },
+    { path: './fonts/archivo-latin.woff2', weight: '500', style: 'normal' },
+    { path: './fonts/archivo-latin.woff2', weight: '600', style: 'normal' },
+    { path: './fonts/archivo-latin.woff2', weight: '800', style: 'normal' },
+  ],
   variable: '--font-sans',
   display: 'swap',
 });
