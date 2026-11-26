@@ -7,11 +7,12 @@ import { useContaApi } from '@/lib/conta-api';
 import { Button } from '@/components/ui/button';
 import { Alert } from '@/components/ui/form';
 import { Secao } from './secao';
+import { MateriaisPicker } from './materiais-picker';
 
 export function ArteiroMateriais({ arteiro, recarregar }: { arteiro: Arteiro; recarregar: () => void }) {
   const contaApi = useContaApi();
   const [disponiveis, setDisponiveis] = useState<ArteiroMaterialRef[] | null>(null);
-  const [selecionados, setSelecionados] = useState<Set<string>>(new Set(arteiro.materiais.map((item) => item.id)));
+  const [selecionados, setSelecionados] = useState<string[]>(arteiro.materiais.map((item) => item.id));
   const [mensagem, setMensagem] = useState<{ tipo: 'erro' | 'sucesso'; texto: string } | null>(null);
   const [salvando, setSalvando] = useState(false);
 
@@ -21,22 +22,13 @@ export function ArteiroMateriais({ arteiro, recarregar }: { arteiro: Arteiro; re
       .catch(() => setDisponiveis([]));
   }, []);
 
-  function alternar(id: string) {
-    setSelecionados((atual) => {
-      const proximo = new Set(atual);
-      if (proximo.has(id)) proximo.delete(id);
-      else proximo.add(id);
-      return proximo;
-    });
-  }
-
   async function salvar() {
     setMensagem(null);
     setSalvando(true);
     try {
       await contaApi(`/arteiros/${arteiro.id}/materiais`, {
         method: 'PUT',
-        body: { materialIds: Array.from(selecionados) },
+        body: { materialIds: selecionados },
       });
       setMensagem({ tipo: 'sucesso', texto: 'Materiais atualizados.' });
       recarregar();
@@ -54,19 +46,9 @@ export function ArteiroMateriais({ arteiro, recarregar }: { arteiro: Arteiro; re
         {disponiveis === null && <p className="text-sm text-muted-foreground">Carregando materiais...</p>}
         {disponiveis?.length === 0 && <p className="text-sm text-muted-foreground">Nenhum material cadastrado ainda.</p>}
 
-        <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-          {disponiveis?.map((material) => (
-            <label key={material.id} className="flex items-center gap-2 text-sm">
-              <input
-                type="checkbox"
-                checked={selecionados.has(material.id)}
-                onChange={() => alternar(material.id)}
-                className="h-4 w-4 accent-primary"
-              />
-              {material.nome}
-            </label>
-          ))}
-        </div>
+        {disponiveis && disponiveis.length > 0 && (
+          <MateriaisPicker disponiveis={disponiveis} selecionados={selecionados} onChange={setSelecionados} />
+        )}
 
         <Button onClick={salvar} disabled={salvando || disponiveis === null}>
           {salvando ? 'Salvando...' : 'Salvar materiais'}

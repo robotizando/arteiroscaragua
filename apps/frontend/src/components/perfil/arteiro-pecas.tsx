@@ -16,6 +16,7 @@ import { formatarValor } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Alert, Field, Input, Textarea, errosPorCampo } from '@/components/ui/form';
 import { Secao } from './secao';
+import { MateriaisPicker } from './materiais-picker';
 
 interface Formulario {
   nome: string;
@@ -133,15 +134,6 @@ export function ArteiroPecas({ arteiro, recarregar }: { arteiro: Arteiro; recarr
     }
   }
 
-  function alternarMaterial(id: string) {
-    setForm((atual) => ({
-      ...atual,
-      materialIds: atual.materialIds.includes(id)
-        ? atual.materialIds.filter((item) => item !== id)
-        : [...atual.materialIds, id],
-    }));
-  }
-
   return (
     <Secao
       titulo="Minhas peças"
@@ -186,20 +178,15 @@ export function ArteiroPecas({ arteiro, recarregar }: { arteiro: Arteiro; recarr
 
               {materiais.length > 0 && (
                 <div className="space-y-1.5 sm:col-span-2">
-                  <span className="block text-sm font-medium">Materiais da peça</span>
-                  <div className="grid gap-2 sm:grid-cols-3">
-                    {materiais.map((material) => (
-                      <label key={material.id} className="flex items-center gap-2 text-sm">
-                        <input
-                          type="checkbox"
-                          checked={form.materialIds.includes(material.id)}
-                          onChange={() => alternarMaterial(material.id)}
-                          className="h-4 w-4 accent-primary"
-                        />
-                        {material.nome}
-                      </label>
-                    ))}
-                  </div>
+                  <label htmlFor="peca-materiais" className="block text-sm font-medium">
+                    Materiais da peça
+                  </label>
+                  <MateriaisPicker
+                    id="peca-materiais"
+                    disponiveis={materiais}
+                    selecionados={form.materialIds}
+                    onChange={(ids) => setForm((atual) => ({ ...atual, materialIds: ids }))}
+                  />
                 </div>
               )}
 
